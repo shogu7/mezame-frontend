@@ -1,23 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import Register from './components/user/register.js';
+import Login from './components/user/login.js';
+import ManhwaList from './components/display/manhwa.js'
+import CurrentUser from './components/display/currentUser.js'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Mezame Frontend</h1>
+      <Register />
+      <Login />
+      <ManhwaList />
+      <CurrentUser />
     </div>
   );
 }
