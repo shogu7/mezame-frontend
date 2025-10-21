@@ -1,21 +1,27 @@
 import { useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 
-export default function Login() {
-  const [identifier, setIdentifier] = useState('');
+export default function Login({ setUser }) { // gettin instance of the user 
+  const [identifier, setIdentifier] = useState(''); // defined as email or username
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // state to show or not the password
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:4000/api/auth/login', { identifier, password });
-      setMessage(`Logged in! Token: ${res.data.token}`);
+      
       localStorage.setItem('token', res.data.token);
-      console.log({ identifier, password });
+
+      const payload = jwtDecode(res.data.token);
+      setUser(payload);
+
+      setMessage(`Connecté en tant que ${payload.username}`);
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Error');
+      console.error(err.response);
+      setMessage(err.response?.data?.message || 'Erreur');
     }
   };
 

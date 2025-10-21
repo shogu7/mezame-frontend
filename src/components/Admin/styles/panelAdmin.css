@@ -1,0 +1,51 @@
+.wrapper {
+  max-width: 960px;
+  margin: 20px auto;
+  padding: 16px;
+  font-family: 'Inter', 'Roboto', Arial, sans-serif;
+}
+
+.title {
+  margin: 0 0 12px 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+
+.btn {
+  margin-right: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.btn.danger {
+  border-color: #d9534f;
+  color: #d9534f;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.error {
+  background: #fdecea;
+  color: #5f2120;
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.btnSecondary {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #999;
+  background: #f7f7f7;
+  cursor: pointer;
+}
