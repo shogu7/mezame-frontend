@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import GoBackButton from '../../components/buttons/goBackButton.jsx'
-import jwtDecode from 'jwt-decode'; // get or not the page depend on "isAdmin" value
+import GoBackButton from '../../components/buttons/goBackButton.jsx';
+// import jwtDecode from 'jwt-decode'; // get or not the page depend on "isAdmin" value
 import './styles/panelAdmin.css';
 
 const API_BASE = 'http://localhost:4000/api/';
@@ -28,13 +28,15 @@ export default function PanelAdmin() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get('http://localhost:4000/api/user-manhwa')
-      const data = await res.data.users;
+      const res = await axios.get(`${API_BASE}admin/users`, {
+        headers: getAuthHeaders(),
+      });
+      const data = res.data && res.data.users ? res.data.users : [];
       setUsers(Array.isArray(data) ? data : []);
-      console.log(res.data);
+      console.log('users loaded', res.data);
     } catch (err) {
       console.error(err);
-      setError('Error to reach users.');
+      setError('Impossible de récupérer les utilisateurs.');
     } finally {
       setLoading(false);
     }
@@ -44,19 +46,22 @@ export default function PanelAdmin() {
     setActionLoading(userId);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/user-manhwa/${userId}`, {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ is_admin: !currentIsAdmin }),
-      });
-      if (!res.ok) {
-        if (res.status === 401 || res.status === 403) throw new Error('Non autorisé');
-        throw new Error(`Erreur: ${res.status}`);
-      }
-      setUsers(u => u.map(x => (x.user_id === userId ? { ...x, is_admin: !currentIsAdmin } : x)));
+      const res = await axios.put(
+        `${API_BASE}user-manhwa/toggle-admin/${userId}`,
+        {},
+        { headers: getAuthHeaders() }
+      );
+      const newIsAdmin = res.data && typeof res.data.is_admin === 'boolean'
+        ? res.data.is_admin
+        : !currentIsAdmin; 
+      setUsers(u => u.map(x => (x.user_id === userId ? { ...x, is_admin: newIsAdmin } : x)));
     } catch (err) {
       console.error(err);
-      setError('Action impossible (promotion/démotion).');
+      if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+        setError('Non autorisé.');
+      } else {
+        setError('Action impossible (promotion/démotion).');
+      }
     } finally {
       setActionLoading(null);
     }
@@ -67,18 +72,21 @@ export default function PanelAdmin() {
     setActionLoading(userId);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/user-manhwa/${userId}`, {
-        method: 'DELETE',
+      const res = await axios.delete(`${API_BASE}admin/user/${userId}`, {
         headers: getAuthHeaders(),
       });
-      if (!res.ok) {
-        if (res.status === 401 || res.status === 403) throw new Error('Non autorisé');
-        throw new Error(`Erreur: ${res.status}`);
+      if (res.status === 200 || res.status === 204 || (res.data && res.data.ok)) {
+        setUsers(u => u.filter(x => x.user_id !== userId));
+      } else {
+        throw new Error('Delete failed');
       }
-      setUsers(u => u.filter(x => x.user_id !== userId));
     } catch (err) {
       console.error(err);
-      setError('Suppression impossible.');
+      if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+        setError('Non autorisé.');
+      } else {
+        setError('Suppression impossible.');
+      }
     } finally {
       setActionLoading(null);
     }
