@@ -1,4 +1,6 @@
 import React from 'react';
+import './user/styles/isConnected.css'
+import ButtonToAdmin from '../components/Admin/buttonToAdmin'
 
 function IsConected({ user, setUser }) {
   const logout = () => {
@@ -6,12 +8,16 @@ function IsConected({ user, setUser }) {
     setUser(null);
   };
 
-  if (!user) return <div>Vous n'êtes pas connecté.</div>;
+  if (!user) return <div className="is-connected"> Vous n'êtes pas connecté.</div>;
 
-  return (
-    <div>
-      <p>Connecté en tant que : {user.username}</p>
-      <p>Admin : {user.is_admin ? 'Oui' : 'Non'}</p>
+return (
+    <div className="is-connected">
+      <div className="user-row">
+        <p>Connecté en tant que : <span className="username">{user.username}</span></p>
+        <span className="admin">{user.is_admin ? 'Admin' : 'User'}</span>
+      </div>
+      <ButtonToAdmin />
+      
       <button onClick={logout}>Se déconnecter</button>
     </div>
   );

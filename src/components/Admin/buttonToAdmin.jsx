@@ -10,7 +10,6 @@ function ButtonToAdmin() {
 
   return (
     <div>
-      <h1>Admin Part </h1>
       <button onClick={goToAdmin} type="button">Admin Panel</button>
     </div>
   );

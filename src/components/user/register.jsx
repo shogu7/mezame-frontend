@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import './styles/log_sign.css';
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -20,15 +21,27 @@ export default function Register() {
   };
 
   return (
-    <div>
+    <form className="form-container" onSubmit={handleRegister}>
       <h2>Register</h2>
-      <form onSubmit={handleRegister}>
-        <input placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
-        <input placeholder="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
-        <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-        <button type="submit">Register</button>
-      </form>
+      <input 
+        placeholder="Username" 
+        value={username} 
+        onChange={e => setUsername(e.target.value)} 
+      />
+      <input 
+        placeholder="Email" 
+        type="email" 
+        value={email} 
+        onChange={e => setEmail(e.target.value)} 
+      />
+      <input 
+        placeholder="Password" 
+        type="password" 
+        value={password} 
+        onChange={e => setPassword(e.target.value)} 
+      />
+      <button type="submit">Register</button>
       <p>{message}</p>
-    </div>
+    </form>
   );
 }

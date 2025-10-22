@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import '../display/styles/manhwa.css'
 
 export default function ManhwaList() {
   const [manhwa, setManhwa] = useState([]);
@@ -7,22 +8,20 @@ export default function ManhwaList() {
 
   useEffect(() => {
     axios.get('http://localhost:4000/api/manhwa')
-      .then(res => {
-        if (res.data.ok) setManhwa(res.data.manhwa);
-      })
+      .then(res => { if (res.data.ok) setManhwa(res.data.manhwa); })
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (!manhwa.length) return <p>No manhwa found.</p>;
+  if (loading) return <p className="loading">Loading...</p>;
+  if (!manhwa.length) return <p className="loading">No manhwa found.</p>;
 
   return (
-    <div>
+    <div className="manhwa-list-container">
       <h2>All Manhwa</h2>
-      <ul>
+      <ul className="manhwa-list">
         {manhwa.map(m => (
-          <li key={m.manhwa_id}>
+          <li key={m.manhwa_id} className="manhwa-item">
             <strong>{m.title}</strong> ({m.original_title}) - Chapters: {m.total_chapters}
             <p>{m.description}</p>
           </li>
@@ -31,3 +30,4 @@ export default function ManhwaList() {
     </div>
   );
 }
+

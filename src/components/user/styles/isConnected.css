@@ -1,0 +1,18 @@
+.is-connected {
+  width: 320px;
+  margin: 12px auto;
+  padding: 14px 18px;
+  background: rgba(10,25,50,0.85);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  text-align: center;
+  color: #a8dadc;
+}
+
+.is-connected p {
+  margin: 8px 0;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
