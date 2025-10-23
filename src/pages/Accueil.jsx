@@ -1,4 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import theme from '../theme';
 import Register from '../components/user/register.jsx';
 import Login from '../components/user/login.jsx';
 import ManhwaList from '../components/display/manhwa.jsx';
@@ -6,7 +13,6 @@ import CurrentUser from '../components/display/currentUser.jsx';
 import ButtonToAdmin from '../components/Admin/buttonToAdmin.jsx';
 import { jwtDecode } from 'jwt-decode';
 import IsConected from '../components/isConnected.jsx';
-import './styles/Acceuil.css';
 
 function Accueil() {
   const [user, setUser] = useState(null);
@@ -25,42 +31,46 @@ function Accueil() {
   }, []);
 
   return (
-    <div>
-      <h1>Mezame Frontend</h1>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ maxWidth: 1100, mx: 'auto', px: 2, pb: 4 }}>
+        <Typography variant="h4" align="center" sx={{ mt: 4, mb: 2, fontWeight: 700 }}>
+          Mezame Frontend
+        </Typography>
 
-          {!user && (
-        <div className="forms-wrapper">
-          <div className="form-stack">
-            {showRegister ? <Register setUser={setUser} /> : <Login setUser={setUser} />}
-            <div className="alt-action">
-              {showRegister ? (
-                <>
-                  Déjà inscrit ?&nbsp;
-                  <button type="button" className="alt-link" onClick={() => setShowRegister(false)}>
-                    Sign in
-                  </button>
-                </>
-              ) : (
-                <>
-                  Pas de compte ?&nbsp;
-                  <button type="button" className="alt-link" onClick={() => setShowRegister(true)}>
-                    Sign up
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+        {!user && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+            <Card sx={{ width: 380, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {showRegister ? <Register setUser={setUser} /> : <Login setUser={setUser} />}
 
+              <Box sx={{ textAlign: 'center', color: 'text.secondary', mt: 0.5 }}>
+                {showRegister ? (
+                  <>
+                    Déjà inscrit ?&nbsp;
+                    <Button size="small" onClick={() => setShowRegister(false)}>Sign in</Button>
+                  </>
+                ) : (
+                  <>
+                    Pas de compte ?&nbsp;
+                    <Button size="small" onClick={() => setShowRegister(true)}>Sign up</Button>
+                  </>
+                )}
+              </Box>
+            </Card>
+          </Box>
+        )}
 
-      <IsConected user={user} setUser={setUser} />
+        <IsConected user={user} setUser={setUser} />
 
-      {user && user.is_admin === 1 && <ButtonToAdmin />}
+        <Box sx={{ mt: 3 }}>
+          <ManhwaList />
+        </Box>
 
-      <ManhwaList />
-      <CurrentUser />
-    </div>
+        <Box sx={{ mt: 2 }}>
+          <CurrentUser />
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 }
 

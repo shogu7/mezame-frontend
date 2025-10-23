@@ -47,7 +47,7 @@ export default function PanelAdmin() {
     setError(null);
     try {
       const res = await axios.put(
-        `${API_BASE}user-manhwa/toggle-admin/${userId}`,
+        `${API_BASE}admin/toggle-admin/${userId}`,
         {},
         { headers: getAuthHeaders() }
       );
