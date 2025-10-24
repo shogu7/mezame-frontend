@@ -10,7 +10,6 @@ import Register from '../components/user/register.jsx';
 import Login from '../components/user/login.jsx';
 import ManhwaList from '../components/display/manhwa.jsx';
 import CurrentUser from '../components/display/currentUser.jsx';
-import ButtonToAdmin from '../components/Admin/buttonToAdmin.jsx';
 import { jwtDecode } from 'jwt-decode';
 import IsConected from '../components/isConnected.jsx';
 
@@ -33,7 +32,7 @@ function Accueil() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ maxWidth: 1100, mx: 'auto', px: 2, pb: 4 }}>
+      <Box sx={{ maxWidth: { xs: 300, sm: 600, md: 900 }, mx: 'auto' }}>
         <Typography variant="h4" align="center" sx={{ mt: 4, mb: 2, fontWeight: 700 }}>
           Mezame Frontend
         </Typography>
