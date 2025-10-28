@@ -1,76 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import theme from '../theme';
-import Register from '../components/user/register.jsx';
-import Login from '../components/user/login.jsx';
-import ManhwaList from '../components/display/manhwa.jsx';
-import CurrentUser from '../components/display/currentUser.jsx';
-import { jwtDecode } from 'jwt-decode';
-import IsConected from '../components/isConnected.jsx';
+import React from "react";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
+import TopAppBar from "../components/topAppBar.jsx";
+import Footer from "../components/footer.jsx";
+import LatestManhwaList from "../components/display/lastedManhwa.jsx";
 
-function Accueil() {
-  const [user, setUser] = useState(null);
-  const [showRegister, setShowRegister] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = jwtDecode(token);
-        setUser(payload);
-      } catch {
-        setUser(null);
-      }
-    }
-  }, []);
+export default function WelcomePage() {
+  const theme = useTheme();
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box sx={{ maxWidth: { xs: 300, sm: 600, md: 900 }, mx: 'auto' }}>
-        <Typography variant="h4" align="center" sx={{ mt: 4, mb: 2, fontWeight: 700 }}>
-          Mezame Frontend
-        </Typography>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        bgcolor: theme.palette.background.default,
+      }}
+    >
+      <TopAppBar />
 
-        {!user && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-            <Card sx={{ width: 380, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {showRegister ? <Register setUser={setUser} /> : <Login setUser={setUser} />}
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 }, flexGrow: 1 }}>
+        <Box sx={{ textAlign: "center", mb: 6, px: 2 }}>
+          <Typography
+            variant="h2"
+            component="h1"
+            gutterBottom
+            sx={{
+              fontWeight: 800,
+              letterSpacing: "-0.02em",
+              color: theme.palette.text.primary,
+              fontSize: { xs: "2.25rem", md: "3rem" },
+            }}
+          >
+            Mezamze
+          </Typography>
 
-              <Box sx={{ textAlign: 'center', color: 'text.secondary', mt: 0.5 }}>
-                {showRegister ? (
-                  <>
-                    Déjà inscrit ?&nbsp;
-                    <Button size="small" onClick={() => setShowRegister(false)}>Sign in</Button>
-                  </>
-                ) : (
-                  <>
-                    Pas de compte ?&nbsp;
-                    <Button size="small" onClick={() => setShowRegister(true)}>Sign up</Button>
-                  </>
-                )}
-              </Box>
-            </Card>
-          </Box>
-        )}
-
-        <IsConected user={user} setUser={setUser} />
-
-        <Box sx={{ mt: 3 }}>
-          <ManhwaList />
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{ maxWidth: 780, mx: "auto", fontWeight: 500 }}
+          >
+            Discover and track the latest manhwa — updated continuously by our community.
+          </Typography>
         </Box>
 
-        <Box sx={{ mt: 2 }}>
-          <CurrentUser />
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
+            Newly added
+          </Typography>
+
+          <LatestManhwaList limit={6} />
         </Box>
-      </Box>
-    </ThemeProvider>
+      </Container>
+
+      <Footer />
+    </Box>
   );
 }
-
-export default Accueil;
