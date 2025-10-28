@@ -3,7 +3,6 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import TopAppBar from "../components/topAppBar.jsx";
 import Footer from "../components/footer.jsx";
 import LatestManhwaList from "../components/display/lastedManhwa.jsx";
 
@@ -16,10 +15,10 @@ export default function WelcomePage() {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
-        bgcolor: theme.palette.background.default,
+        bgcolor: 
+          theme.palette.mode === "light",
       }}
     >
-      <TopAppBar />
 
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 }, flexGrow: 1 }}>
         <Box sx={{ textAlign: "center", mb: 6, px: 2 }}>

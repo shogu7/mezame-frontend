@@ -9,16 +9,16 @@
 .form-container {
   width: 350px;
   padding: 30px 25px;
-  background: rgba(10, 25, 50, 0.85);
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .form-container:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.8);
 }
 
 .form-container h2 {
@@ -35,14 +35,14 @@
   margin: 10px 0;
   border: none;
   border-radius: 8px;
-  background-color: rgba(255,255,255,0.1);
-  color: #f1faee;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
   font-size: 16px;
   transition: all 0.3s;
 }
 
 .form-container input:focus {
-  background-color: rgba(255,255,255,0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   outline: none;
   transform: scale(1.03);
   box-shadow: 0 0 8px #00b4d8;
@@ -54,7 +54,7 @@
   margin-top: 15px;
   border: none;
   border-radius: 10px;
-  background-color: #0077b6;
+  background-color: #ffffff;
   color: #f1faee;
   font-size: 16px;
   cursor: pointer;
@@ -64,7 +64,7 @@
 .form-container button:hover {
   background-color: #00b4d8;
   transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+  box-shadow: 0 6px 15px rgba(255, 255, 255, 0.6);
 }
 
 .form-container .show-password {
@@ -89,7 +89,7 @@
   position: relative;
   width: 40px;
   height: 20px;
-  background-color: rgba(255,255,255,0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   border-radius: 34px;
   transition: 0.3s;
 }
