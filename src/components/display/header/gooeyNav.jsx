@@ -155,15 +155,6 @@ const GooeyNav = ({
             </li>
           ))}
         </ul>
-
-        <button
-          type="button"
-          className="login-btn"
-          onClick={() => navigate('/login')}
-          aria-label="Connexion"
-        >
-          Connexion
-        </button>
       </nav>
 
       <span className="effect filter" ref={filterRef} />

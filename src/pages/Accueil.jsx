@@ -3,13 +3,20 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import Footer from "../components/footer.jsx";
-import LatestManhwaList from "../components/display/lastedManhwa.jsx";
+import Footer from "../components/display/footer/footer.jsx";
+import LatestManhwaList from "../components/display/manhwa/lastedManhwa.jsx";
+import { motion } from 'framer-motion';
 
 export default function WelcomePage() {
   const theme = useTheme();
 
   return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+    >
     <Box
       sx={{
         minHeight: "100vh",
@@ -56,5 +63,6 @@ export default function WelcomePage() {
 
       <Footer />
     </Box>
+    </motion.div>
   );
 }

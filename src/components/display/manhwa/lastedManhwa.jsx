@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-export default function LatestManhwaList({ limit = 6, fetchUrl = `/api/manhwas/latest?limit=` }) {
+export default function LatestManhwaList({ limit = 6, fetchUrl = `/api/manhwa/latest?limit=` }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();

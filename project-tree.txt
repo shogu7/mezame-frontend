@@ -1,0 +1,204 @@
+.
+./README.md
+./public
+./public/favicon.ico
+./public/index.html
+./public/logo512.png
+./public/manifest.json
+./public/robots.txt
+./public/logo192.png
+./.gitignore
+./package-lock.json
+./package.json
+./project-tree.txt
+./src
+./src/reportWebVitals.js
+./src/router.jsx
+./src/App.css
+./src/index.js
+./src/theme.js
+./src/index.css
+./src/components
+./src/components/buttons
+./src/components/buttons/goBackButton.jsx
+./src/components/Admin
+./src/components/Admin/adminSection.jsx
+./src/components/Admin/styles
+./src/components/Admin/buttonToAdmin.jsx
+./src/components/Admin/panelAdmin.jsx
+./src/components/effect
+./src/components/effect/pageWrapper.jsx
+./src/components/user
+./src/components/user/auth
+./src/components/user/user_display
+./src/components/display
+./src/components/display/footer
+./src/components/display/background_old
+./src/components/display/manhwa
+./src/components/display/header
+./src/App.test.js
+./src/App.jsx
+./src/lib
+./src/lib/manhwaApi.js
+./src/setupTests.js
+./src/pages
+./src/pages/styles
+./src/pages/styles/Acceuil.css
+./src/pages/Connection.jsx
+./src/pages/panelAdmin.jsx
+./src/pages/Accueil.jsx
+./src/logo.svg
+
+# Proposition de réorganisation du projet
+
+But: structure claire, conventions constantes, historique Git préservé.
+
+---
+
+## Arborescence recommandée
+
+```
+/ (root)
+├─ public/
+├─ src/
+│  ├─ main.jsx                # point d'entrée (remplace index.js)
+│  ├─ App.jsx
+│  ├─ theme/
+│  │  └─ index.js
+│  ├─ router/
+│  │  └─ index.jsx
+│  ├─ assets/                 # images, fonts, logos
+│  │  └─ logo.svg
+│  ├─ styles/                 # styles globaux et variables
+│  │  ├─ index.css
+│  │  └─ App.module.css
+│  ├─ components/             # composants réutilisables (PascalCase)
+│  │  ├─ ui/
+│  │  │  └─ GoBackButton/
+│  │  │     ├─ GoBackButton.jsx
+│  │  │     └─ GoBackButton.module.css
+│  │  ├─ layout/
+│  │  │  ├─ Header/
+│  │  │  │  ├─ Header.jsx
+│  │  │  │  └─ Header.module.css
+│  │  │  └─ Footer/
+│  │  │     ├─ Footer.jsx
+│  │  │     └─ Footer.module.css
+│  │  └─ effect/
+│  │     └─ PageWrapper/
+│  │        ├─ PageWrapper.jsx
+│  │        └─ PageWrapper.module.css
+│  ├─ features/               # groupes fonctionnels (Admin, User, Manhwa)
+│  │  ├─ admin/
+│  │  │  ├─ AdminSection.jsx
+│  │  │  ├─ PanelAdmin.jsx
+│  │  │  └─ ButtonToAdmin.jsx
+│  │  ├─ user/
+│  │  │  ├─ auth/
+│  │  │  │  └─ index.jsx
+│  │  │  └─ UserDisplay/
+│  │  │     └─ UserDisplay.jsx
+│  │  └─ manhwa/
+│  │     └─ manhwa components...
+│  ├─ pages/
+│  │  ├─ Home/
+│  │  │  ├─ Home.jsx           # ancien Accueil.jsx
+│  │  │  └─ Home.module.css
+│  │  ├─ Connection/
+│  │  │  └─ Connection.jsx
+│  │  └─ Admin/
+│  │     └─ PanelAdmin.jsx
+│  ├─ services/               # API, clients externes
+│  │  └─ api/
+│  │     └─ manhwaApi.js
+│  ├─ utils/
+│  │  └─ reportWebVitals.js
+│  ├─ tests/
+│  │  ├─ App.test.js
+│  │  └─ setupTests.js
+│  └─ index.css               # alias si besoin, ou garder styles/index.css
+```
+
+---
+
+## Principes et conventions
+
+* Fichiers composants en `PascalCase.jsx`. Dossiers en `kebab-case` ou `lowerCamel` au choix. Je recommande `kebab-case` pour dossiers.
+* Styles locaux en `*.module.css` pour éviter les collisions.
+* Répartir en `components/` (UI + layout + effets) et `features/` (fonctionnalités, pages).
+* Points d'entrée clairs: `src/main.jsx` et `src/router/index.jsx`.
+* Garder `services/api/*` pour les appels réseau.
+* Utiliser `index.js` dans dossiers quand on veut des exports par défaut (barrel files).
+
+---
+
+## Mapping des fichiers existants -> nouveaux chemins
+
+```
+src/index.js                      -> src/main.jsx
+src/App.jsx                       -> src/App.jsx
+src/App.css                       -> src/styles/App.module.css
+src/index.css                     -> src/styles/index.css
+src/theme.js                      -> src/theme/index.js
+src/router.jsx                    -> src/router/index.jsx
+src/reportWebVitals.js            -> src/utils/reportWebVitals.js
+src/setupTests.js                  -> src/tests/setupTests.js
+src/App.test.js                   -> src/tests/App.test.js
+src/lib/manhwaApi.js              -> src/services/api/manhwaApi.js
+src/logo.svg                      -> src/assets/logo.svg
+
+src/components/buttons/goBackButton.jsx                 -> src/components/ui/GoBackButton/GoBackButton.jsx
+src/components/Admin/adminSection.jsx                   -> src/features/admin/AdminSection.jsx
+src/components/Admin/buttonToAdmin.jsx                  -> src/features/admin/ButtonToAdmin.jsx
+src/components/Admin/panelAdmin.jsx                     -> src/features/admin/PanelAdmin.jsx
+src/components/Admin/styles/*                            -> src/features/admin/PanelAdmin.module.css (ou conserver séparé)
+src/components/effect/pageWrapper.jsx                   -> src/components/effect/PageWrapper/PageWrapper.jsx
+src/components/user/auth/*                              -> src/features/user/auth/index.jsx
+src/components/user/user_display/*                      -> src/features/user/UserDisplay/UserDisplay.jsx
+src/components/display/header/*                         -> src/components/layout/Header/Header.jsx
+src/components/display/footer/*                         -> src/components/layout/Footer/Footer.jsx
+src/components/display/background_old/*                 -> src/components/display/Background/BackgroundOld.jsx
+src/components/display/manhwa/*                         -> src/features/manhwa/...
+src/pages/Accueil.jsx                                   -> src/pages/Home/Home.jsx
+src/pages/styles/Acceuil.css                            -> src/pages/Home/Home.module.css  (correction orthographe)
+src/pages/Connection.jsx                                -> src/pages/Connection/Connection.jsx
+src/pages/panelAdmin.jsx                                -> src/pages/Admin/PanelAdmin.jsx
+```
+
+---
+
+## Commandes `git` proposées (préservent l'historique)
+
+Exemple pour un fichier :
+
+```bash
+git checkout -b refactor/restructure-project
+git mv src/index.js src/main.jsx
+git mv src/router.jsx src/router/index.jsx
+# ... répéter git mv pour chaque fichier mentionné ci-dessus
+git commit -m "chore: restructure project folders and rename files"
+```
+
+Pour renommer un dossier complet en conservant l'historique :
+
+```bash
+git mv src/components/Admin src/features/admin
+git mv src/components/buttons src/components/ui
+# etc
+```
+
+---
+
+## Mise à jour des imports (exemples)
+
+Utiliser `git grep` + `sed` ou un outil JS pour corriger les chemins. Exemple macOS/Linux (GNU `sed` peut varier) :
+
+```bash
+# recherche des fichiers qui importent l'ancien chemin
+git grep -l "components/buttons/goBackButton" | xargs sed -i '' 's@components/buttons/goBackButton@components/ui/GoBackButton/GoBackButton@g'
+
+# ou une commande portable avec perl
+git grep -l "components/buttons/goBackButton" | xargs perl -pi -e 's|components/buttons/goBackButton|components/ui/GoBackButton/GoBackButton|g'
+```
+
+Si le projet est volumineux, utiliser `jscod
