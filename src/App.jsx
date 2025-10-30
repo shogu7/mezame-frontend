@@ -2,10 +2,10 @@ import React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { BrowserRouter } from 'react-router-dom';
-import theme from './theme.js';
-// import ColorBends from './components/display/background/colorBends.jsx';
-import GooeyNav from "./components/display/header/gooeyNav.jsx";
-import Router from './router.jsx';
+import theme from './shared/styles/theme.js';
+import GooeyNav from './shared/components/layout/Header/gooeyNav.jsx';
+import Router from './Router.jsx';
+
 
 function App() {
   const items = [
