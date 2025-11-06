@@ -10,6 +10,7 @@ function AdminSection() {
     if (token) {
       try {
         const payload = jwtDecode(token);
+       // console.log('Admin payload:', payload);
         setIsAdmin(payload.is_admin === 1 || payload.isAdmin === true);
       } catch (err) {
         console.error('Token invalide', err);

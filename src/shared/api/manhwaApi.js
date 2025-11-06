@@ -1,8 +1,3 @@
-// API helper for manhwa-related fetches
-// - Tries a couple of likely endpoints and normalizes the result to:
-//   [{ id, title, originalTitle, description, releaseDate, totalChapters, totalSeasons, coverUrl, slug }]
-// - Generates a slug from the title if none provided.
-
 async function tryFetch(url, options) {
   try {
     const res = await fetch(url, options);
@@ -10,7 +5,7 @@ async function tryFetch(url, options) {
     const json = await res.json();
     return json;
   } catch (err) {
-    // swallow here and let caller decide next URL to try
+
     return null;
   }
 }
@@ -18,7 +13,7 @@ async function tryFetch(url, options) {
 function slugify(text = "") {
   return text
     .toString()
-    .normalize("NFKD") // remove accents
+    .normalize("NFKD") 
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim()
@@ -27,8 +22,6 @@ function slugify(text = "") {
 }
 
 function mapManhwa(raw) {
-  // raw might come in several forms, attempt to read fields from dump:
-  // manhwa_id, title, original_title, description, release_date, total_chapters, total_seasons
   const id = raw.manhwa_id ?? raw.id ?? raw._id ?? null;
   const title = raw.title ?? raw.name ?? "Untitled";
   return {
@@ -39,9 +32,7 @@ function mapManhwa(raw) {
     releaseDate: raw.release_date ?? raw.releaseDate ?? null,
     totalChapters: raw.total_chapters ?? raw.totalChapters ?? null,
     totalSeasons: raw.total_seasons ?? raw.totalSeasons ?? null,
-    // backend doesn't have coverUrl in SQL dump; keep null if not provided
     coverUrl: raw.coverUrl ?? raw.cover_url ?? raw.cover ?? null,
-    // if backend provides a slug field use it, otherwise generate one from title (fall back to id)
     slug: raw.slug ?? raw.slugified ?? (title ? slugify(title) : `manhwa-${id}`),
     raw,
   };
