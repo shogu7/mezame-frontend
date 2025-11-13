@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, Typography, FormControl, Select, MenuItem, Button, Pagination } from '@mui/material';
+import { Box, Grid, Typography, CircularProgress, FormControl, Select, MenuItem, Button, Pagination } from '@mui/material';
 import { useLibrary } from './useLibrary';
 import { ManhwaCard } from './manhwaCard';
 import { SearchToolbar } from './SearchToolbar';
@@ -8,7 +8,7 @@ import { getField } from './getField';
 export function UserCollection() {
   const {
     manhwaList,
-    // allManhwa, never used
+    // allManhwa, never used for now :-:
     loading,
     filters,
     setFilters,
@@ -26,12 +26,50 @@ export function UserCollection() {
     console.log('continue', getField(m, 'slug') || getField(m, 'id'));
   };
 
-  if (loading) {
-    return <Typography color="text.secondary">Loading...</Typography>;
-  }
+if (loading) {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 1.5,
+        mt: 4,
+      }}
+    >
+      <CircularProgress size={32} />
+      <Typography
+        variant="body1"
+        sx={{ color: 'text.secondary', fontWeight: 500 }}
+      >
+        Loading...
+      </Typography>
+    </Box>
+  );
+}
+
+
+if (manhwaList.length === 0) {
+  return (
+    <Typography
+      variant="h6"
+      component="div"
+      sx={{
+        color: 'text.secondary',
+        fontFamily: ['Inter', 'Roboto', '"Helvetica Neue"', 'Arial'].join(','),
+        fontWeight: 700,
+        textAlign: 'center',
+        py: 4,
+      }}
+    >
+      No Manhwa found in your labrary — Add one to start ;-;
+    </Typography>
+  );
+}
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'transparent', py: 4 }}>
       <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 3, md: 6 } }}>
         <Typography variant="h3" sx={{ fontWeight: 600, mb: 1, letterSpacing: '-0.2px' }}>
           My Collection

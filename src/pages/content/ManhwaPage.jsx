@@ -27,10 +27,8 @@ export default function ManhwaPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // snackbar hook
   const { snackbar, showMessage, closeSnackbar } = useSnackbar();
 
-  // library hook needs showMessage to inform user
   const {
     isInLibrary,
     readingStatus,
@@ -44,7 +42,6 @@ export default function ManhwaPage() {
     saveToLibrary,
   } = useLibraryStatus(showMessage);
 
-  // dialog open state local to page
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -63,7 +60,6 @@ export default function ManhwaPage() {
         if (data.ok) {
           setManhwa(data.manhwa);
           setError('');
-          // check library for the fetched manhwa
           await checkLibraryStatus(data.manhwa.manhwa_id);
         } else {
           setManhwa(null);
@@ -93,9 +89,7 @@ export default function ManhwaPage() {
       current_chapter: currentChapter === '' ? 0 : Number(currentChapter),
       rating: userRating === '' ? null : Number(userRating),
     }, () => {
-      // callback after successful save: close dialog and refresh
       handleCloseDialog();
-      // refresh library status from server
       checkLibraryStatus(manhwa.manhwa_id);
     });
   };
@@ -146,7 +140,6 @@ export default function ManhwaPage() {
     );
   }
 
-  // normalize genres like dans ton original
   const genres = Array.isArray(manhwa.genres)
     ? manhwa.genres
     : typeof manhwa.genres === 'string'
@@ -155,13 +148,24 @@ export default function ManhwaPage() {
 
   const rating = manhwa.rating || 4.5;
 
+  
+    // cloudinary image make better placement
+    const coverUrl = manhwa.cover_public_id
+    ? `https://res.cloudinary.com/degc8d4er/image/upload/c_fill,g_auto,w_500,h_750/${manhwa.cover_public_id}.webp`
+    : manhwa.cover_url;
+
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 6 }, px: { xs: 3, md: 6 } }}>
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} md={4}>
             <Card sx={{ bgcolor: 'background.paper', borderRadius: 1.5, overflow: 'hidden', boxShadow: 1, border: '1px solid rgba(255,255,255,0.03)' }}>
-              <CardMedia component="img" image={manhwa.cover_url} alt={manhwa.title} sx={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover' }} />
+              <CardMedia
+            component="img"
+            image={coverUrl}
+            alt={manhwa.title}
+            sx={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover' }}
+          />
             </Card>
           </Grid>
 

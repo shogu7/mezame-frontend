@@ -52,14 +52,14 @@ function Connection() {
                 gap: 2,
                 p: 3,
                 borderRadius: 2,
-                bgcolor: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                bgcolor: 'rgba(255, 0, 0, 0.03)',
+                border: '1px solid rgba(93, 209, 241, 0.1)',
                 backdropFilter: 'blur(6px)',
-                boxShadow: '0 0 30px rgba(169, 169, 169, 0.3), 0 0 60px rgba(83, 63, 101, 0.32)',
+                boxShadow: '0 0 30px rgba(59, 242, 255, 0.3), 0 0 60px rgba(83, 63, 101, 0.32)',
                 transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                 '&:hover': {
                   transform: 'translateY(-4px)',
-                  boxShadow: '0 0 30px rgba(162, 0, 255, 0.3), 0 0 60px rgba(134, 5, 248, 0.32)',
+                  boxShadow: '0 0 30px rgba(255, 255, 255, 0.16), 0 0 60px rgba(255, 255, 255, 0.2)',
                 }
               }}>
                 {showRegister ? <Register setUser={setUser} /> : <Login setUser={setUser} />}
@@ -71,7 +71,7 @@ function Connection() {
                       <Button
                         size="small"
                         onClick={() => setShowRegister(false)}
-                        sx={{ color: 'secondary.main', fontWeight: 600, '&:hover': { backgroundColor: 'rgba(0, 180, 216, 0.1)' } }}
+                        sx={{ color: 'common.white', fontWeight: 600, '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}
                       >
                         Sign in
                       </Button>

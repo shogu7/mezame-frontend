@@ -14,18 +14,35 @@ import {
 
 export function SearchToolbar({ filters, onFiltersChange, allGenres = [], allAuthors = [] }) {
   const handle = (patch) => onFiltersChange({ ...filters, ...patch });
-
   const statusOptions = useMemo(() => ['reading', 'completed', 'plan_to_read', 'on_hold', 'dropped'], []);
 
   return (
-    <Box sx={{ mb: 3 }}>
+    <Box
+      sx={{
+        mb: 3,
+        p: 2,
+        borderRadius: 3,
+        bgcolor: 'rgba(255, 255, 255, 0.03)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(8px)',
+        boxShadow: '0 4px 30px rgba(0,0,0,0.1)',
+      }}
+    >
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
         <TextField
           size="small"
           placeholder="Search by title..."
           value={filters.search || ''}
           onChange={(e) => handle({ search: e.target.value })}
-          sx={{ minWidth: 220, flex: 1 }}
+          sx={{
+            minWidth: 220,
+            flex: 1,
+            bgcolor: 'rgba(255,255,255,0.05)',
+            borderRadius: 2,
+            input: { color: 'common.white' },
+            '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.12)' },
+            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
+          }}
         />
 
         <Autocomplete
@@ -34,32 +51,53 @@ export function SearchToolbar({ filters, onFiltersChange, allGenres = [], allAut
           options={allGenres}
           value={filters.genres || []}
           onChange={(_, value) => handle({ genres: value })}
-          sx={{ width: 240 }}
+          sx={{
+            width: 240,
+            bgcolor: 'rgba(255,255,255,0.05)',
+            
+            borderRadius: 2,
+            '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.12)' },
+            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
+            input: { color: 'common.white' },
+            
+          }}
           renderInput={(params) => <TextField {...params} label="Genres" />}
         />
 
         <FormControl size="small" sx={{ minWidth: 180 }}>
-          <InputLabel id="author-label">Author</InputLabel>
+          <InputLabel id="author-label" sx={{ color: 'common.white', '&.Mui-focused': { color: 'white' } }}>Author</InputLabel>
           <Select
             labelId="author-label"
             value={filters.author || ''}
             label="Author"
             onChange={(e) => handle({ author: e.target.value || null })}
+            sx={{
+              bgcolor: 'rgba(255,255,255,0.05)',
+              borderRadius: 2,
+              color: 'common.white',
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.12)' },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
+            }}
           >
             <MenuItem value="">Any</MenuItem>
-            {allAuthors.map((a) => (
-              <MenuItem key={a} value={a}>{a}</MenuItem>
-            ))}
+            {allAuthors.map((a) => <MenuItem key={a} value={a}>{a}</MenuItem>)}
           </Select>
         </FormControl>
 
         <FormControl size="small" sx={{ minWidth: 140 }}>
-          <InputLabel id="sort-label">Sort</InputLabel>
+          <InputLabel id="sort-label" sx={{ color: 'common.white' }}>Sort</InputLabel>
           <Select
             labelId="sort-label"
             value={filters.sort}
             label="Sort"
             onChange={(e) => handle({ sort: e.target.value })}
+            sx={{
+              bgcolor: 'rgba(255,255,255,0.05)',
+              borderRadius: 2,
+              color: 'common.white',
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.12)' },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
+            }}
           >
             <MenuItem value="A-Z">A-Z</MenuItem>
             <MenuItem value="Z-A">Z-A</MenuItem>
@@ -70,17 +108,22 @@ export function SearchToolbar({ filters, onFiltersChange, allGenres = [], allAut
         </FormControl>
 
         <FormControl size="small" sx={{ minWidth: 160 }}>
-          <InputLabel id="status-filter-label">Status</InputLabel>
+          <InputLabel id="status-filter-label" sx={{ color: 'common.white' }}>Status</InputLabel>
           <Select
             labelId="status-filter-label"
             value={(filters.status && filters.status.length > 0) ? filters.status[0] : ''}
             label="Status"
             onChange={(e) => handle({ status: e.target.value ? [e.target.value] : [] })}
+            sx={{
+              bgcolor: 'rgba(255,255,255,0.05)',
+              borderRadius: 2,
+              color: 'common.white',
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.12)' },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
+            }}
           >
             <MenuItem value="">All</MenuItem>
-            {statusOptions.map((s) => (
-              <MenuItem key={s} value={s}>{s}</MenuItem>
-            ))}
+            {statusOptions.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
           </Select>
         </FormControl>
 
@@ -89,6 +132,11 @@ export function SearchToolbar({ filters, onFiltersChange, allGenres = [], allAut
             size="small"
             variant="outlined"
             onClick={() => handle({ search: '', genres: [], author: null, sort: 'A-Z', status: [] })}
+            sx={{
+              color: 'common.white',
+              borderColor: 'rgba(255,255,255,0.12)',
+              '&:hover': { borderColor: 'rgba(255,255,255,0.2)' },
+            }}
           >
             Clear
           </Button>

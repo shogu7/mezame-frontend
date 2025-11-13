@@ -26,3 +26,4 @@ node_modules/
 .env
 lib/
 project-tree.txt
+src/pages/user/profile/profilePage.jsx

@@ -1,12 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-
 import { jwtDecode } from 'jwt-decode';
 
-// const API_BASE = 'http://localhost:4000/api/';
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:4000/api/'; // TODO: Fix api call with .env
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:4000/api/';
 
-export function useLibrary() {
+const formatStatus = (status) => {
+  if (!status && status !== 0) return '';
+  return String(status)
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+export function useLibrary(userIdOrUsername) {
   const [user, setUser] = useState(null);
   const [allManhwa, setAllManhwa] = useState([]);
   const [manhwaList, setManhwaList] = useState([]);
@@ -24,6 +30,7 @@ export function useLibrary() {
   const [allGenres, setAllGenres] = useState([]);
   const [allAuthors, setAllAuthors] = useState([]);
 
+  // token grab
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -34,30 +41,40 @@ export function useLibrary() {
         setUser(null);
       }
     }
+    setLoading(false);
   }, []);
 
   const fetchLibrary = useCallback(async () => {
-    if (!user) return;
+    const identifier = userIdOrUsername || user?.username;
+    if (!identifier) {
+      setAllManhwa([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE}user/library`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      const res = await axios.get(`${API_BASE}user/${identifier}/library`, {
+        headers: user ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+        params: { page, pageSize },
       });
-    if (res.data.ok) {
-      setAllManhwa(res.data.items); 
-      console.log('Fetched manhwa items:', res.data.items);
-      console.log(JSON.stringify(res.data.items[0], null, 2));
-    } else {
-      setAllManhwa([]);
-    }
+
+      if (res.data && res.data.ok) {
+        const items = (res.data.items || []).map((m) => ({
+          ...m,
+          displayStatus: formatStatus(m.status ?? m.userStatus ?? ''),
+        }));
+        setAllManhwa(items);
+      } else {
+        setAllManhwa([]);
+      }
     } catch (err) {
       console.error(err);
-      console.log('Error fetching library, setting allManhwa to empty array.');
       setAllManhwa([]);
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, userIdOrUsername, page, pageSize]);
 
   useEffect(() => {
     fetchLibrary();
@@ -71,24 +88,36 @@ export function useLibrary() {
         m.title.toLowerCase().includes(filters.search.toLowerCase())
       );
     }
-    if (filters.genres.length > 0) {
-      filtered = filtered.filter((m) => m.genres?.some((g) => filters.genres.includes(g)));
+    if (filters.genres.length) {
+      filtered = filtered.filter((m) =>
+        m.genres?.some((g) => filters.genres.includes(g))
+      );
     }
     if (filters.author) {
       filtered = filtered.filter((m) => m.author === filters.author);
     }
-    if (filters.status.length > 0) {
-      filtered = filtered.filter((m) => filters.status.includes(m.status));
+    if (filters.status.length) {
+      filtered = filtered.filter(
+        (m) =>
+          filters.status.includes(m.status) ||
+          filters.status.includes(m.displayStatus)
+      );
     }
 
     filtered.sort((a, b) => {
       switch (filters.sort) {
-        case 'A-Z': return a.title.localeCompare(b.title);
-        case 'Z-A': return b.title.localeCompare(a.title);
-        case 'Newest': return new Date(b.release_date) - new Date(a.release_date);
-        case 'Recent': return new Date(b.added_at) - new Date(a.added_at);
-        case 'Chapters': return (b.total_chapters || 0) - (a.total_chapters || 0);
-        default: return 0;
+        case 'A-Z':
+          return a.title.localeCompare(b.title);
+        case 'Z-A':
+          return b.title.localeCompare(a.title);
+        case 'Newest':
+          return new Date(b.releaseDate) - new Date(a.releaseDate);
+        case 'Recent':
+          return new Date(b.addedAt) - new Date(a.addedAt);
+        case 'Chapters':
+          return (b.totalChapters || 0) - (a.totalChapters || 0);
+        default:
+          return 0;
       }
     });
 
@@ -108,17 +137,6 @@ export function useLibrary() {
     setAllAuthors(Array.from(authorsSet));
   }, [allManhwa]);
 
-  const toggleFollow = async (manhwa) => {
-    if (!user) return;
-    try {
-      const manhwaId = manhwa.id;
-      await axios.post(`${API_BASE}user/library`, { manhwa_id: manhwaId, status: manhwa.status });
-      fetchLibrary();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return {
     manhwaList,
     allManhwa,
@@ -132,6 +150,6 @@ export function useLibrary() {
     totalPages,
     allGenres,
     allAuthors,
-    toggleFollow,
+    refreshLibrary: fetchLibrary,
   };
 }
