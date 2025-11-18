@@ -5,7 +5,8 @@ import Connection from './pages/auth/ConnectionPage.jsx';
 import ManhwaPage from './pages/content/ManhwaPage.jsx';
 import { AnimatePresence } from "framer-motion";
 import UserCollection from './pages/user/collection/userCollection.jsx';
-import ProfilePage from './pages/user/profile/profilePage.jsx'
+import ProfilePage from './pages/user/profile/ProfilePage.jsx';
+import Library from './pages/library/library.jsx';
 
 function Router() {
   const location = useLocation();
@@ -15,11 +16,12 @@ function Router() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Accueil />} />
         <Route path="/Accueil" element={<Accueil />} />
-        <Route path="/adminpanel" element={<AdminSection />} />
         <Route path="/login" element={<Connection />} />
         <Route path="/manhwa/:id" element={<ManhwaPage />} />
         <Route path="/collection/:userName" element={<UserCollection />} />
         <Route path="/profile/:userId" element={<ProfilePage />} />
+        <Route path="/library" element={<Library />} />
+        <Route path="/admin" element={<AdminSection />} />
       </Routes>
     </AnimatePresence>
   );

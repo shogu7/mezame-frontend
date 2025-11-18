@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 
 const statusOptions = [
+  { value: 'plan_to_read', label: 'Plan to Read' },
   { value: 'reading', label: 'Reading' },
   { value: 'completed', label: 'Completed' },
-  { value: 'plan_to_read', label: 'Plan to Read' },
   { value: 'on_hold', label: 'On Hold' },
   { value: 'dropped', label: 'Dropped' },
 ];
@@ -53,16 +53,24 @@ export default function LibraryDialog({
             <InputLabel id="status-label">Status</InputLabel>
             <Select
               labelId="status-label"
-              value={readingStatus}
+              value={String(readingStatus ?? 'plan_to_read')}
               label="Status"
-              onChange={(e) => setReadingStatus(e.target.value)}
+              onChange={(e) => {
+                const v = String(e.target.value).toLowerCase();
+                setReadingStatus(v);
+              }}
+              MenuProps={{ PaperProps: { sx: { bgcolor: 'background.paper', color: 'text.primary' } } }}
               sx={{ '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.06)' } }}
             >
-              {statusOptions.map((option) => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
+              {statusOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value} sx={{ color: 'text.primary' }}>
+                  {option.label}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 
-          {['reading', 'on_hold'].includes(readingStatus) && (
+          {['reading', 'on_hold'].includes(String(readingStatus)) && (
             <TextField
               fullWidth
               label="Current Chapter"
@@ -81,10 +89,13 @@ export default function LibraryDialog({
               value={userRating}
               label="Your Rating (Optional)"
               onChange={(e) => setUserRating(e.target.value)}
+              MenuProps={{ PaperProps: { sx: { bgcolor: 'background.paper', color: 'text.primary' } } }}
               sx={{ '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.06)' } }}
             >
-              <MenuItem value="">None</MenuItem>
-              {[10,9,8,7,6,5,4,3,2,1].map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+              <MenuItem value="" sx={{ color: 'text.primary' }}>None</MenuItem>
+              {[10,9,8,7,6,5,4,3,2,1].map((r) => (
+                <MenuItem key={r} value={r} sx={{ color: 'text.primary' }}>{r}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Stack>

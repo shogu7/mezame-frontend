@@ -39,17 +39,38 @@ export default function useLibraryStatus(showMessage) {
       }
 
       const data = await res.json().catch(() => null);
-      if (data && data.ok && data.inLibrary) {
-        setIsInLibrary(true);
-        setReadingStatus(data.status ?? 'plan_to_read');
-        setCurrentChapter(data.currentChapter ?? '');
-        setUserRating(data.rating ?? '');
-      } else {
+      console.log('checkLibraryStatus response', data);
+
+      const serverStatus =
+        (data && (data.status || data.entry?.status || data.library?.status || data.data?.status)) ?? null;
+
+      const explicitInLibrary = data && (data.inLibrary === true || data.inLibrary === false);
+
+      if (explicitInLibrary && data.inLibrary === false) {
         setIsInLibrary(false);
         setReadingStatus('plan_to_read');
         setCurrentChapter('');
         setUserRating('');
+        return;
       }
+
+      if (serverStatus) {
+        setIsInLibrary(true);
+        setReadingStatus(String(serverStatus).toLowerCase());
+        setCurrentChapter(data.currentChapter ?? '');
+        setUserRating(data.rating ?? '');
+        return;
+      }
+
+      if (explicitInLibrary && data.inLibrary === true) {
+        setIsInLibrary(true);
+        setReadingStatus('plan_to_read');
+        setCurrentChapter(data.currentChapter ?? '');
+        setUserRating(data.rating ?? '');
+        return;
+      }
+
+      return;
     } catch (err) {
       console.error('checkLibraryStatus error', err);
       setIsInLibrary(false);
@@ -83,6 +104,7 @@ export default function useLibraryStatus(showMessage) {
       console.log('Save response status:', res.status);
 
       const data = await res.json().catch(() => null);
+      console.log('Save response json:', data);
 
       if (!res.ok || !data || !data.ok) {
         console.error('Save failed', res.status, data);
@@ -94,12 +116,18 @@ export default function useLibraryStatus(showMessage) {
         return;
       }
 
-      showMessage?.('Saved to your library', 'success');
-      onSuccess?.();
+      const savedStatus =
+        (data && (data.status || data.entry?.status || data.library?.status || data.data?.status)) ?? null;
+
+      const finalStatus = savedStatus ? String(savedStatus).toLowerCase() : (payload.status ?? 'plan_to_read');
+
       setIsInLibrary(true);
-      setReadingStatus(payload.status ?? 'plan_to_read');
+      setReadingStatus(finalStatus);
       setCurrentChapter(payload.current_chapter != null ? payload.current_chapter : '');
       setUserRating(payload.rating != null ? payload.rating : '');
+
+      showMessage?.('Saved to your library', 'success');
+      onSuccess?.();
     } catch (err) {
       console.error('Save failed', err);
       showMessage?.('Network error while saving', 'error');

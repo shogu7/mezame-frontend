@@ -1,11 +1,11 @@
-import PanelAdmin from '../components/admin/adminPanel.jsx'
+import PanelAdminTabs from '../../features/admin/tab/TabAdminPanel';
 
-function panelAdmin() {
+function PanelAdminPage() {
   return (
     <div>
-      <PanelAdmin />
+      <PanelAdminTabs />
     </div>
   );
 }
 
-export default panelAdmin;
+export default PanelAdminPage;

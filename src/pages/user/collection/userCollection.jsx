@@ -1,14 +1,23 @@
 import React from 'react';
-import { Box, Grid, Typography, CircularProgress, FormControl, Select, MenuItem, Button, Pagination } from '@mui/material';
-import { useLibrary } from './useLibrary';
-import { ManhwaCard } from './manhwaCard';
+import {
+  Box,
+  Grid,
+  Typography,
+  CircularProgress,
+  FormControl,
+  Select,
+  MenuItem,
+  Pagination,
+  Button
+} from '@mui/material';
+import { useLibrary } from './hook/useLibrary';
+import CardManhwa from './manhwaCard';
 import { SearchToolbar } from './SearchToolbar';
-import { getField } from './getField';
+import { getField } from './hook/getField';
 
 export function UserCollection() {
   const {
     manhwaList,
-    // allManhwa, never used for now :-:
     loading,
     filters,
     setFilters,
@@ -19,62 +28,30 @@ export function UserCollection() {
     totalPages,
     allGenres,
     allAuthors,
-    toggleFollow,
   } = useLibrary();
 
-  const handleContinue = (m) => {
-    console.log('continue', getField(m, 'slug') || getField(m, 'id'));
+  const handleOpenManhwa = (m) => {
+    const slug = getField(m, 'slug') || getField(m, 'id');
+    if (slug) window.location.href = `/manhwa/${slug}`;
   };
 
-if (loading) {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 1.5,
-        mt: 4,
-      }}
-    >
-      <CircularProgress size={32} />
-      <Typography
-        variant="body1"
-        sx={{ color: 'text.secondary', fontWeight: 500 }}
-      >
-        Loading...
-      </Typography>
-    </Box>
-  );
-}
-
-
-if (manhwaList.length === 0) {
-  return (
-    <Typography
-      variant="h6"
-      component="div"
-      sx={{
-        color: 'text.secondary',
-        fontFamily: ['Inter', 'Roboto', '"Helvetica Neue"', 'Arial'].join(','),
-        fontWeight: 700,
-        textAlign: 'center',
-        py: 4,
-      }}
-    >
-      No Manhwa found in your labrary — Add one to start ;-;
-    </Typography>
-  );
-}
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, gap: 2 }}>
+        <CircularProgress size={32} />
+        <Typography variant="body1" color="text.secondary">Loading...</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'transparent', py: 4 }}>
-      <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 3, md: 6 } }}>
-        <Typography variant="h3" sx={{ fontWeight: 600, mb: 1, letterSpacing: '-0.2px' }}>
+      <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 4 } }}>
+        <Typography variant="h3" sx={{ fontWeight: 600, mb: 2 }}>
           My Collection
         </Typography>
 
+        {/* Search / Filters Toolbar */}
         <SearchToolbar
           filters={filters}
           onFiltersChange={setFilters}
@@ -89,10 +66,7 @@ if (manhwaList.length === 0) {
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select
               value={pageSize}
-              onChange={(e) => {
-                setPageSize(Number(e.target.value));
-                setPage(1);
-              }}
+              onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
             >
               <MenuItem value={20}>20</MenuItem>
               <MenuItem value={40}>40</MenuItem>
@@ -102,14 +76,18 @@ if (manhwaList.length === 0) {
         </Box>
 
         {manhwaList.length > 0 ? (
-          <Grid container spacing={3}>
+          <Grid container spacing={2} justifyContent="flex-start">
             {manhwaList.map((m) => (
-              <Grid item xs={12} sm={6} md={4} key={getField(m, 'id') || getField(m, 'slug')}>
-                <ManhwaCard
-                  manhwa={m}
-                  onFollowToggle={toggleFollow}
-                  onContinue={handleContinue}
-                />
+              <Grid
+                item
+                key={getField(m, 'id') || getField(m, 'slug')}
+                xs={6}
+                sm={4} 
+                md={3}
+                lg={2.4}
+                sx={{ display: 'flex', justifyContent: 'center' }}
+              >
+                <CardManhwa manhwa={m} onClick={handleOpenManhwa} />
               </Grid>
             ))}
           </Grid>
@@ -133,6 +111,7 @@ if (manhwaList.length === 0) {
           </Box>
         )}
 
+        {/* Pagination */}
         {totalPages > 1 && (
           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
             <Pagination

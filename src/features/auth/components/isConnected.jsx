@@ -69,7 +69,7 @@ export default function IsConnected({ user, setUser }) {
         {user.is_admin && (
           <Button
             component={RouterLink}
-            to="/adminpanel"
+            to="/admin"
             variant="contained"
             size="small"
             sx={{

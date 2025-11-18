@@ -27,5 +27,3 @@ export default function BackButton() {
     </Button>
   );
 }
-
-// change icm, same logic for 2 buttons, ill fusion it in an single component.

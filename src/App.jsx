@@ -17,10 +17,12 @@ function App() {
 
   const items = [
     { label: "Home", href: "/" },
+    { label: "Library", href: "/library" },
     { label: "Collection", href: user ? `/collection/${user.username}` : "/login" },
     { label: "Profile", href: `/profile/${user.username}` },
     { label: "Connexion", href: "/login" },
   ];
+
 
   return (
     <ThemeProvider theme={theme}>

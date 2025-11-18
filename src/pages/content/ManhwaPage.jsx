@@ -15,6 +15,7 @@ import ManhwaInfo from './components/ManhwaInfo';
 import ManhwaStat from './components/ManhwaStats';
 import LibraryDialog from './components/LibraryDialog';
 import LibrarySnackbar from './components/LibrarySnackbar';
+import BackButton from '../../shared/components/buttons/BackButton'
 
 import useSnackbar from './hooks/useSnackbar';
 import useLibraryStatus from './hooks/useLibraryStatus';
@@ -66,7 +67,6 @@ export default function ManhwaPage() {
           setError(data.error || 'Manhwa not found');
         }
       } catch (err) {
-        console.error(err);
         if (!mounted) return;
         setManhwa(null);
         setError('Fetch error: ' + err.message);
@@ -83,15 +83,17 @@ export default function ManhwaPage() {
 
   const handleSave = async () => {
     if (!manhwa) return;
-    await saveToLibrary({
-      manhwa_id: manhwa.manhwa_id,
-      status: readingStatus,
-      current_chapter: currentChapter === '' ? 0 : Number(currentChapter),
-      rating: userRating === '' ? null : Number(userRating),
-    }, () => {
-      handleCloseDialog();
-      checkLibraryStatus(manhwa.manhwa_id);
-    });
+    await saveToLibrary(
+      {
+        manhwa_id: manhwa.manhwa_id,
+        status: readingStatus,
+        current_chapter: currentChapter === '' ? 0 : Number(currentChapter),
+        rating: userRating === '' ? null : Number(userRating),
+      },
+      () => {
+        handleCloseDialog();
+      }
+    );
   };
 
   const handleShare = () => {
@@ -106,6 +108,7 @@ export default function ManhwaPage() {
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 6 }, px: { xs: 3, md: 6 } }}>
+        <BackButton />
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
             <Skeleton variant="rectangular" height={480} sx={{ borderRadius: 1.5 }} />
@@ -123,9 +126,7 @@ export default function ManhwaPage() {
   if (error) {
     return (
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 6 }, px: { xs: 3, md: 6 } }}>
-        <Alert severity="error" sx={{ borderRadius: 1.5 }}>
-          {error}
-        </Alert>
+        <Alert severity="error" sx={{ borderRadius: 1.5 }}>{error}</Alert>
       </Container>
     );
   }
@@ -133,9 +134,7 @@ export default function ManhwaPage() {
   if (!manhwa) {
     return (
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 6 }, px: { xs: 3, md: 6 } }}>
-        <Alert severity="warning" sx={{ borderRadius: 1.5 }}>
-          Manhwa not found
-        </Alert>
+        <Alert severity="warning" sx={{ borderRadius: 1.5 }}>Manhwa not found</Alert>
       </Container>
     );
   }
@@ -148,24 +147,23 @@ export default function ManhwaPage() {
 
   const rating = manhwa.rating || 4.5;
 
-  
-    // cloudinary image make better placement
-    const coverUrl = manhwa.cover_public_id
+  const coverUrl = manhwa.cover_public_id
     ? `https://res.cloudinary.com/degc8d4er/image/upload/c_fill,g_auto,w_500,h_750/${manhwa.cover_public_id}.webp`
     : manhwa.cover_url;
 
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 6 }, px: { xs: 3, md: 6 } }}>
+        <BackButton /> 
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} md={4}>
             <Card sx={{ bgcolor: 'background.paper', borderRadius: 1.5, overflow: 'hidden', boxShadow: 1, border: '1px solid rgba(255,255,255,0.03)' }}>
               <CardMedia
-            component="img"
-            image={coverUrl}
-            alt={manhwa.title}
-            sx={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover' }}
-          />
+                component="img"
+                image={coverUrl}
+                alt={manhwa.title}
+                sx={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover' }}
+              />
             </Card>
           </Grid>
 
@@ -191,7 +189,9 @@ export default function ManhwaPage() {
 
         <Card sx={{ bgcolor: 'background.paper', borderRadius: 1.5, boxShadow: 1, border: '1px solid rgba(255,255,255,0.03)', p: 3, mb: 4 }}>
           <Typography variant="h6" sx={{ color: 'text.primary', mb: 2, fontWeight: 600 }}>Synopsis</Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.7 }}>{manhwa.description || 'No description available.'}</Typography>
+          <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.7 }}>
+            {manhwa.description || 'No description available.'}
+          </Typography>
         </Card>
 
         <Card sx={{ bgcolor: 'background.paper', borderRadius: 1.5, boxShadow: 1, border: '1px solid rgba(255,255,255,0.03)', p: 3 }}>
@@ -200,7 +200,9 @@ export default function ManhwaPage() {
             <Grid item xs={12} sm={6}>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 0.5 }}>Original Title</Typography>
-                <Typography variant="body1" sx={{ color: 'text.primary' }}>{manhwa.original_title || manhwa.title}</Typography>
+                <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                  {manhwa.original_title || manhwa.title}
+                </Typography>
               </Box>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 0.5 }}>Type</Typography>
@@ -210,11 +212,15 @@ export default function ManhwaPage() {
             <Grid item xs={12} sm={6}>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 0.5 }}>Status</Typography>
-                <Typography variant="body1" sx={{ color: 'text.primary' }}>{manhwa.status || 'Ongoing'}</Typography>
+                <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                  {manhwa.status || 'Ongoing'}
+                </Typography>
               </Box>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 0.5 }}>Release Date</Typography>
-                <Typography variant="body1" sx={{ color: 'text.primary' }}>{manhwa.release_date ? new Date(manhwa.release_date).toLocaleDateString() : 'N/A'}</Typography>
+                <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                  {manhwa.release_date ? new Date(manhwa.release_date).toLocaleDateString() : 'N/A'}
+                </Typography>
               </Box>
             </Grid>
           </Grid>

@@ -2,11 +2,9 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './styles/gooeyNav.css';
 
-
 const GooeyNav = ({
   items = [],
-  onLogin = () => {},
-  animationTime = 600,
+  animationTime = 300,
   initialActiveIndex = 0
 }) => {
   const navigate = useNavigate();
@@ -17,7 +15,18 @@ const GooeyNav = ({
   const textRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
 
-  // Update effect position helper
+  const normalizePath = (p) => {
+    if (!p) return '/';
+    try {
+      let s = String(p).toLowerCase();
+      if (!s.startsWith('/')) s = '/' + s;
+      if (s === '/') return '/';
+      return s.replace(/\/+$/, '');
+    } catch {
+      return '/';
+    }
+  };
+
   const updateEffectPosition = element => {
     if (!containerRef.current || !filterRef.current || !textRef.current || !element) return;
     const containerRect = containerRef.current.getBoundingClientRect();
@@ -33,23 +42,29 @@ const GooeyNav = ({
     textRef.current.innerText = element.innerText;
   };
 
-  // When user clicks a nav item: animate + navigate
-  const handleClick = (liEl, index, href) => {
-    if (activeIndex === index) return;
-    setActiveIndex(index);
+  const animateEffectOnElement = (liEl) => {
+    if (!liEl) return;
     updateEffectPosition(liEl);
-
     if (textRef.current) {
       textRef.current.classList.remove('active');
-      // force reflow to restart animation
       void textRef.current.offsetWidth;
       textRef.current.classList.add('active');
     }
-
-    if (href) navigate(href);
   };
 
-  // keyboard activation (Enter / Space)
+  const handleClick = (liEl, index, href) => {
+    const hrefNorm = normalizePath(href);
+    if (activeIndex !== index) {
+      setActiveIndex(index);
+      animateEffectOnElement(liEl);
+    } else {
+      animateEffectOnElement(liEl);
+    }
+    if (href) {
+      navigate(hrefNorm);
+    }
+  };
+
   const handleKeyDown = (e, liEl, index, href) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -57,35 +72,26 @@ const GooeyNav = ({
     }
   };
 
-  // Sync activeIndex with current location.pathname.
-  // Match exactly: item.href must equal pathname (no startsWith).
   useEffect(() => {
     if (!items || items.length === 0) return;
-    const pathname = location.pathname || '/';
+    const pathname = normalizePath(location.pathname || '/');
 
-    // find the first item whose href exactly equals pathname
-    // If none found, fall back to initialActiveIndex (or -1 to no selection)
     const foundIndex = items.findIndex(it => {
-      // Normalize: ensure both end with no trailing slash except root
-      const normalize = p => (p === '/' ? '/' : p.replace(/\/+$/, ''));
       const href = it.href ?? '#';
-      return href && normalize(href) === normalize(pathname);
+      return href && normalizePath(href) === pathname;
     });
 
-    const newIndex = foundIndex >= 0 ? foundIndex : -1;
+    const newIndex = foundIndex >= 0 ? foundIndex : initialActiveIndex;
 
-    // If same as current activeIndex, still ensure effect is placed on matching element.
     if (newIndex !== activeIndex) {
       setActiveIndex(newIndex);
     } else {
-      // place effect even if index didn't change (e.g., direct refresh on same route)
       const activeLi = navRef.current?.querySelectorAll('li')[newIndex];
       if (activeLi) updateEffectPosition(activeLi);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname, items]);
+  }, [location.pathname, items, initialActiveIndex]);
 
-  // On mount and resize, ensure the effect aligns to the active item (if any)
   useEffect(() => {
     if (!navRef.current || !containerRef.current) return;
     const activeLi = activeIndex >= 0 ? navRef.current.querySelectorAll('li')[activeIndex] : null;
@@ -93,7 +99,6 @@ const GooeyNav = ({
       updateEffectPosition(activeLi);
       textRef.current?.classList.add('active');
     } else {
-      // Hide the effect when nothing is active
       if (filterRef.current) filterRef.current.style.width = '0px';
       if (textRef.current) {
         textRef.current.style.width = '0px';
@@ -102,13 +107,13 @@ const GooeyNav = ({
       }
     }
 
-    const resizeObserver = new ResizeObserver(() => {
+    const ro = new ResizeObserver(() => {
       const currentActiveLi = activeIndex >= 0 ? navRef.current?.querySelectorAll('li')[activeIndex] : null;
       if (currentActiveLi) updateEffectPosition(currentActiveLi);
     });
 
-    resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
   }, [activeIndex]);
 
   return (
@@ -116,14 +121,12 @@ const GooeyNav = ({
       <nav>
         <ul ref={navRef}>
           {items.map((item, index) => {
-            // Ensure we treat missing hrefs safely
             const href = item.href ?? '#';
             return (
               <li
                 key={index}
                 className={activeIndex === index ? 'active' : ''}
-                // make li focusable for keyboard users
-                tabIndex={-1}
+                tabIndex={0}
                 aria-current={activeIndex === index ? 'page' : undefined}
               >
                 <a
@@ -137,7 +140,6 @@ const GooeyNav = ({
                     const liEl = e.currentTarget.parentElement;
                     if (liEl) handleKeyDown(e, liEl, index, href);
                   }}
-                  // allow anchor to be focusable
                   tabIndex={0}
                 >
                   {item.label}
