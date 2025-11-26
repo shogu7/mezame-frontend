@@ -5,8 +5,11 @@ import Connection from './pages/auth/ConnectionPage.jsx';
 import ManhwaPage from './pages/content/ManhwaPage.jsx';
 import { AnimatePresence } from "framer-motion";
 import UserCollection from './pages/user/collection/userCollection.jsx';
-import ProfilePage from './pages/user/profile/ProfilePage.jsx';
+// eslint-disable-next-line
+import ProfilePage from './pages/user/profile/ProfilePage.jsx'
 import Library from './pages/library/library.jsx';
+import EditProfilePage from './pages/user/editProfile/EditProfilePage.jsx'
+import ProtectedRoute from './shared/utils/routes/ProtectedRoute.jsx'
 
 function Router() {
   const location = useLocation();
@@ -22,6 +25,12 @@ function Router() {
         <Route path="/profile/:userId" element={<ProfilePage />} />
         <Route path="/library" element={<Library />} />
         <Route path="/admin" element={<AdminSection />} />
+        <Route path="/editprofile" element={
+            <ProtectedRoute>
+              <EditProfilePage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </AnimatePresence>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../../../shared/context/authContext';
 import axios from 'axios';
 import {
   Box,
@@ -15,7 +16,11 @@ import {
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-export default function Login({ setUser }) {
+export default function Login() {
+  const { loginWithToken } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState(null);
@@ -26,14 +31,28 @@ export default function Login({ setUser }) {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
+    
     try {
       const res = await axios.post('http://localhost:4000/api/auth/login', { identifier, password });
-      localStorage.setItem('token', res.data.token);
-      const payload = jwtDecode(res.data.token);
-      setUser(payload);
-      setMessage({ type: 'success', text: `Connecté en tant que ${payload.username}` });
+      
+      console.log('✅ Login success, token:', res.data.token);
+      
+      // Utiliser loginWithToken du contexte pour mettre à jour user
+      loginWithToken(res.data.token);
+      
+      setMessage({ type: 'success', text: `Connexion réussie !` });
+      
+      // Rediriger vers la page d'origine ou vers home
+      const from = location.state?.from || '/';
+      console.log('🚀 Redirecting to:', from);
+      
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 500);
+      
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Erreur' });
+      console.error('❌ Login error:', err);
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Erreur de connexion' });
     } finally {
       setLoading(false);
     }

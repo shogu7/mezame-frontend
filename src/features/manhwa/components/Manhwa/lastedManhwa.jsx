@@ -4,15 +4,15 @@ import {
   Grid,
   Card,
   CardActionArea,
-  CardContent,
   CardMedia,
   Typography,
   Chip,
   Skeleton,
-  Button,
   useTheme,
+  Fade,
 } from "@mui/material";
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import TvIcon from '@mui/icons-material/Tv';
 
 export default function LatestManhwaList({ 
   limit = 6, 
@@ -30,21 +30,13 @@ export default function LatestManhwaList({
       setError(null);
       try {
         const url = `${fetchUrl}${limit}`;
-        console.log('🚀 Fetching from:', url);
-        
         const res = await fetch(url);
-        console.log('📡 Response status:', res.status);
         
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         
         const json = await res.json();
-        console.log('📦 Received data:', json);
-        console.log('📦 Type:', typeof json);
-        console.log('📦 Is array?', Array.isArray(json));
-        
         let itemsToSet = [];
+        
         if (Array.isArray(json)) {
           itemsToSet = json;
         } else if (json.items && Array.isArray(json.items)) {
@@ -53,12 +45,9 @@ export default function LatestManhwaList({
           itemsToSet = json.manhwa;
         }
         
-        console.log('✅ Setting items:', itemsToSet.length, 'items');
-        console.log('🔍 First item:', itemsToSet[0]);
-        
         if (mounted) setItems(itemsToSet);
       } catch (err) {
-        console.error("❌ LatestManhwaList fetch error:", err);
+        console.error("LatestManhwaList error:", err);
         if (mounted) {
           setItems([]);
           setError(err.message);
@@ -72,145 +61,162 @@ export default function LatestManhwaList({
   }, [limit, fetchUrl]);
 
   const cardSx = {
-    borderRadius: 2,
-    boxShadow: 2,
-    transition: "transform 200ms, box-shadow 200ms",
-    '&:hover': { transform: 'translateY(-6px)', boxShadow: 6 },
-    background: theme.palette.background.paper,
+    height: '100%',
+    width: '100%',
+    aspectRatio: '500/700',
+    borderRadius: 3,
+    position: 'relative',
+    overflow: 'hidden',
+    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+    transition: "transform 0.4s ease, box-shadow 0.4s ease",
+    '&:hover': { 
+      transform: 'translateY(-6px)', 
+      boxShadow: '0 12px 25px rgba(0,0,0,0.3)',
+      '& .MuiCardMedia-root': {
+        transform: 'scale(1.08)',
+      },
+      '& .card-overlay': {
+         background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%)',
+      }
+    },
   };
 
-  const titleSx = { fontWeight: 700, color: theme.palette.text.primary };
-  const subtitleSx = { color: theme.palette.text.secondary };
-  const descriptionSx = {
-    display: '-webkit-box',
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    color: theme.palette.text.secondary,
-    fontSize: '0.95rem'
+  const overlaySx = {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    height: '60%',
+    background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    p: 2,
+    transition: 'background 0.4s ease',
+    zIndex: 2,
+  };
+
+  const badgeSx = {
+    backdropFilter: 'blur(6px)',
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    color: '#fff',
+    fontWeight: 600,
+    border: '1px solid rgba(255,255,255,0.15)',
+    height: 26,
+    fontSize: '0.75rem',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+    '& .MuiChip-icon': { color: theme.palette.primary.light, fontSize: 15 }
   };
 
   if (loading) {
     return (
       <Grid container spacing={2} sx={{ mt: 1 }}>
         {Array.from({ length: limit }).map((_, i) => (
-          <Grid key={i} item xs={12} sm={6} md={4}>
-            <Card sx={cardSx}>
-              <Skeleton variant="rectangular" height={180} />
-              <CardContent>
-                <Skeleton width="60%" height={28} />
-                <Skeleton width="40%" />
-                <Skeleton width="80%" />
-              </CardContent>
-            </Card>
+          <Grid key={i} item xs={6} sm={4} md={3} lg={2}>
+            <Skeleton 
+              variant="rectangular" 
+              sx={{ borderRadius: 3, aspectRatio: '500/700', height: 'auto' }} 
+            />
           </Grid>
         ))}
       </Grid>
     );
   }
 
-  if (error) {
+  if (error || !items.length) {
     return (
       <Box textAlign="center" py={6}>
-        <Typography variant="h6" color="error" gutterBottom>
-          Erreur de chargement
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {error}
-        </Typography>
-      </Box>
-    );
-  }
-
-  if (!items.length) {
-    return (
-      <Box textAlign="center" py={6}>
-        <Typography variant="h6" color="text.secondary">
-          Aucun manhwa trouvé. Soyez le premier à en ajouter.
+        <Typography variant="h6" color={error ? "error" : "text.secondary"}>
+          {error ? "Erreur de chargement" : "Aucun manhwa trouvé"}
         </Typography>
       </Box>
     );
   }
 
   return (
-    <Grid container spacing={2} sx={{ mt: 1 }}>
+    <Grid container spacing={3} sx={{ mt: 1, px: 1 }}>
       {items.map((m) => (
-        <Grid item xs={12} sm={6} md={4} key={m.manhwa_id}>
-          <Card sx={cardSx}>
-            <CardActionArea href={`/manhwa/${m.manhwa_id}`} sx={{ display: 'block', textAlign: 'left' }}>
-              {m.cover_url ? (
-                <CardMedia
-                  component="img"
-                  height="180"
-                  image={m.cover_url}
-                  alt={m.title}
-                />
-              ) : (
-                <Box
-                  sx={{
-                    height: 180,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: theme.palette.primary.light,
-                    color: theme.palette.primary.contrastText,
-                    px: 2,
-                  }}
-                >
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+        <Grid item xs={6} sm={4} md={3} lg={2} key={m.manhwa_id}>
+          <Fade in={true} timeout={600}>
+            <Card sx={cardSx}>
+              <CardActionArea 
+                href={`/manhwa/${m.manhwa_id}`} 
+                sx={{ height: '100%', width: '100%' }}
+              >
+                {m.cover_url ? (
+                  <CardMedia
+                    component="img"
+                    image={m.cover_url}
+                    alt={m.title}
+                    sx={{ 
+                      height: '100%', 
+                      width: '100%', 
+                      objectFit: 'cover',
+                      transition: 'transform 0.5s ease' 
+                    }}
+                  />
+                ) : (
+                  <Box sx={{ height: '100%', bgcolor: 'grey.900', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Typography variant="caption" color="grey.500">Sans Cover</Typography>
+                  </Box>
+                )}
+
+                <Box sx={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 0.8, flexDirection: 'column', alignItems: 'flex-end', zIndex: 3 }}>
+                  {m.total_seasons && (
+                    <Chip
+                      icon={<TvIcon />}
+                      label={`Saison ${m.total_seasons}`}
+                      size="small"
+                      sx={badgeSx}
+                    />
+                  )}
+                  {m.total_chapters && (
+                    <Chip
+                      icon={<AutoStoriesIcon />}
+                      label={`${m.total_chapters} Ch.`}
+                      size="small"
+                      sx={badgeSx}
+                    />
+                  )}
+                </Box>
+
+                <Box className="card-overlay" sx={overlaySx}>
+                  <Typography 
+                    variant="subtitle1" 
+                    component="h3"
+                    sx={{ 
+                      color: '#fff', 
+                      fontWeight: 700, 
+                      lineHeight: 1.3,
+                      textShadow: '0 2px 10px rgba(0,0,0,0.9)',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      mb: 0.5
+                    }}
+                  >
                     {m.title}
                   </Typography>
+                  
+                  {m.original_title && (
+                    <Typography 
+                      variant="caption" 
+                      sx={{ 
+                        color: 'rgba(255,255,255,0.75)', 
+                        display: 'block',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
+                      {m.original_title}
+                    </Typography>
+                  )}
                 </Box>
-              )}
-
-              <CardContent>
-                <Typography variant="h6" sx={titleSx} gutterBottom noWrap>
-                  {m.title}
-                </Typography>
-
-                {m.original_title && (
-                  <Typography variant="body2" sx={subtitleSx} noWrap>
-                    {m.original_title}
-                  </Typography>
-                )}
-
-                {m.description && (
-                  <Typography variant="body2" sx={{ ...descriptionSx, mt: 1 }}>
-                    {m.description}
-                  </Typography>
-                )}
-
-                <Box mt={2} display="flex" alignItems="center" justifyContent="space-between">
-                  <Box>
-                    {m.total_chapters && (
-                      <Chip
-                        label={`${m.total_chapters} chap.`}
-                        size="small"
-                        sx={{ mr: 1, bgcolor: theme.palette.info.light, color: theme.palette.info.contrastText }}
-                      />
-                    )}
-                    {m.total_seasons && (
-                      <Chip
-                        label={`S${m.total_seasons}`}
-                        size="small"
-                        sx={{ bgcolor: theme.palette.success.light, color: theme.palette.success.contrastText }}
-                      />
-                    )}
-                  </Box>
-
-                  <Button
-                    size="small"
-                    endIcon={<ArrowForwardIosIcon fontSize="small" />}
-                    sx={{ textTransform: 'none' }}
-                    href={`/manhwa/${m.manhwa_id}`}
-                  >
-                    Voir
-                  </Button>
-                </Box>
-              </CardContent>
-            </CardActionArea>
-          </Card>
+              </CardActionArea>
+            </Card>
+          </Fade>
         </Grid>
       ))}
     </Grid>

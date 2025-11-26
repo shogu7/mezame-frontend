@@ -27,6 +27,7 @@ export default function ProfileLibrary({ userId }) {
     setLoading(true);
     setError('');
     try {
+      // fetch this user's library from the API for the given page and pageSize
       const params = new URLSearchParams();
       params.set('page', String(p));
       params.set('pageSize', String(ps));
@@ -65,6 +66,7 @@ export default function ProfileLibrary({ userId }) {
     );
   }
 
+  // return error
   if (error) {
     return (
       <Box sx={{ py: 4 }}>
