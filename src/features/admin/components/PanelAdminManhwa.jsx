@@ -19,7 +19,9 @@ import {
   IconButton,
 } from '@mui/material';
 
-const API_BASE = 'http://localhost:4000/api/';
+const API_BASE = process.env.REACT_APP_API_BASE
+  ? `${process.env.REACT_APP_API_BASE}/api/`
+  : 'http://localhost:4000/api/';
 
 function getAuthHeaders() {
   const token = localStorage.getItem('token');

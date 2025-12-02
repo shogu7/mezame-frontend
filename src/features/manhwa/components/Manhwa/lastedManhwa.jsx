@@ -14,9 +14,13 @@ import {
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import TvIcon from '@mui/icons-material/Tv';
 
-export default function LatestManhwaList({ 
-  limit = 6, 
-  fetchUrl = `http://localhost:4000/api/manhwa/latest?limit=` 
+const API_BASE = process.env.REACT_APP_API_BASE
+  ? `${process.env.REACT_APP_API_BASE}/api/`
+  : 'http://localhost:4000/api/';
+
+export default function LatestManhwaList({
+  limit = 6,
+  fetchUrl = `${API_BASE}manhwa/latest?limit=`
 }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,12 +35,12 @@ export default function LatestManhwaList({
       try {
         const url = `${fetchUrl}${limit}`;
         const res = await fetch(url);
-        
+
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        
+
         const json = await res.json();
         let itemsToSet = [];
-        
+
         if (Array.isArray(json)) {
           itemsToSet = json;
         } else if (json.items && Array.isArray(json.items)) {
@@ -44,7 +48,7 @@ export default function LatestManhwaList({
         } else if (json.manhwa && Array.isArray(json.manhwa)) {
           itemsToSet = json.manhwa;
         }
-        
+
         if (mounted) setItems(itemsToSet);
       } catch (err) {
         console.error("LatestManhwaList error:", err);
@@ -69,14 +73,14 @@ export default function LatestManhwaList({
     overflow: 'hidden',
     boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
     transition: "transform 0.4s ease, box-shadow 0.4s ease",
-    '&:hover': { 
-      transform: 'translateY(-6px)', 
+    '&:hover': {
+      transform: 'translateY(-6px)',
       boxShadow: '0 12px 25px rgba(0,0,0,0.3)',
       '& .MuiCardMedia-root': {
         transform: 'scale(1.08)',
       },
       '& .card-overlay': {
-         background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%)',
+        background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%)',
       }
     },
   };
@@ -113,9 +117,9 @@ export default function LatestManhwaList({
       <Grid container spacing={2} sx={{ mt: 1 }}>
         {Array.from({ length: limit }).map((_, i) => (
           <Grid key={i} item xs={6} sm={4} md={3} lg={2}>
-            <Skeleton 
-              variant="rectangular" 
-              sx={{ borderRadius: 3, aspectRatio: '500/700', height: 'auto' }} 
+            <Skeleton
+              variant="rectangular"
+              sx={{ borderRadius: 3, aspectRatio: '500/700', height: 'auto' }}
             />
           </Grid>
         ))}
@@ -139,8 +143,8 @@ export default function LatestManhwaList({
         <Grid item xs={6} sm={4} md={3} lg={2} key={m.manhwa_id}>
           <Fade in={true} timeout={600}>
             <Card sx={cardSx}>
-              <CardActionArea 
-                href={`/manhwa/${m.manhwa_id}`} 
+              <CardActionArea
+                href={`/manhwa/${m.manhwa_id}`}
                 sx={{ height: '100%', width: '100%' }}
               >
                 {m.cover_url ? (
@@ -148,11 +152,11 @@ export default function LatestManhwaList({
                     component="img"
                     image={m.cover_url}
                     alt={m.title}
-                    sx={{ 
-                      height: '100%', 
-                      width: '100%', 
+                    sx={{
+                      height: '100%',
+                      width: '100%',
                       objectFit: 'cover',
-                      transition: 'transform 0.5s ease' 
+                      transition: 'transform 0.5s ease'
                     }}
                   />
                 ) : (
@@ -181,12 +185,12 @@ export default function LatestManhwaList({
                 </Box>
 
                 <Box className="card-overlay" sx={overlaySx}>
-                  <Typography 
-                    variant="subtitle1" 
+                  <Typography
+                    variant="subtitle1"
                     component="h3"
-                    sx={{ 
-                      color: '#fff', 
-                      fontWeight: 700, 
+                    sx={{
+                      color: '#fff',
+                      fontWeight: 700,
                       lineHeight: 1.3,
                       textShadow: '0 2px 10px rgba(0,0,0,0.9)',
                       display: '-webkit-box',
@@ -198,12 +202,12 @@ export default function LatestManhwaList({
                   >
                     {m.title}
                   </Typography>
-                  
+
                   {m.original_title && (
-                    <Typography 
-                      variant="caption" 
-                      sx={{ 
-                        color: 'rgba(255,255,255,0.75)', 
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'rgba(255,255,255,0.75)',
                         display: 'block',
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
@@ -221,4 +225,4 @@ export default function LatestManhwaList({
       ))}
     </Grid>
   );
-}
+} 

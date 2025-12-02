@@ -9,6 +9,10 @@ import {
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
+const API_BASE = process.env.REACT_APP_API_BASE
+  ? `${process.env.REACT_APP_API_BASE}/api/`
+  : 'http://localhost:4000/api/';
+
 export default function ImageUploader({ onUploadSuccess, currentImageUrl }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
@@ -43,17 +47,21 @@ export default function ImageUploader({ onUploadSuccess, currentImageUrl }) {
     setError(null);
 
     try {
-      const res = await fetch('http://localhost:4000/api/upload/cover', {
+      // --- Utilisation de l'API_BASE corrigée ---
+      const url = `${API_BASE}upload/cover`;
+
+      const res = await fetch(url, {
         method: 'POST',
         body: formData
       });
+      // ------------------------------------------
 
       const data = await res.json();
 
       if (data.ok) {
         console.log('✅ Upload success:', data.url);
         setPreview(data.url);
-        
+
         // Callback pour le parent avec l'URL
         if (onUploadSuccess) {
           onUploadSuccess(data.url, data.public_id);

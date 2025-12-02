@@ -4,7 +4,9 @@ import { Box, Button } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import '../display/styles/manhwa.css';
 
-const API_BASE = 'http://localhost:4000/api/';
+const API_BASE = process.env.REACT_APP_API_BASE
+  ? `${process.env.REACT_APP_API_BASE}/api/`
+  : 'http://localhost:4000/api/';
 
 export default function ManhwaList() {
   const [manhwa, setManhwa] = useState([]);
@@ -26,7 +28,7 @@ export default function ManhwaList() {
     } catch (err) {
       console.error('Manhwa fetch error', err);
       setError('Impossible de récupérer la liste des manhwa.');
-      setManhwa([]); 
+      setManhwa([]);
     } finally {
       setLoading(false);
     }

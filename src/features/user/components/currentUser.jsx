@@ -2,13 +2,19 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../display/styles/currentUser.css'
 
+const API_BASE = process.env.REACT_APP_API_BASE
+  ? `${process.env.REACT_APP_API_BASE}/api/`
+  : 'http://localhost:4000/api/';
+
 export default function UsersList() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:4000/api/user-manhwa')
-      .then(res => { if (res.data.ok) setUsers(res.data.users); })
+    axios.get(`${API_BASE}user-manhwa`)
+      .then(res => {
+        if (res.data.ok) setUsers(res.data.users);
+      })
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
   }, []);
@@ -30,4 +36,3 @@ export default function UsersList() {
     </div>
   );
 }
-

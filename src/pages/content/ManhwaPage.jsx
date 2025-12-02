@@ -20,7 +20,9 @@ import BackButton from '../../shared/components/buttons/BackButton'
 import useSnackbar from './hooks/useSnackbar';
 import useLibraryStatus from './hooks/useLibraryStatus';
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:4000/api/';
+const API_BASE = process.env.REACT_APP_API_BASE
+  ? `${process.env.REACT_APP_API_BASE}/api/`
+  : 'http://localhost:4000/api/';
 
 export default function ManhwaPage() {
   const { id } = useParams();
@@ -154,7 +156,7 @@ export default function ManhwaPage() {
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 6 }, px: { xs: 3, md: 6 } }}>
-        <BackButton /> 
+        <BackButton />
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} md={4}>
             <Card sx={{ bgcolor: 'background.paper', borderRadius: 1.5, overflow: 'hidden', boxShadow: 1, border: '1px solid rgba(255,255,255,0.03)' }}>

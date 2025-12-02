@@ -3,7 +3,9 @@ import { useAuth } from '../../../../shared/context/authContext';
 
 export function useUserProfile(paramUserId) {
   const { user: authUser } = useAuth();
-  const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:4000/api/';
+  const API_BASE = process.env.REACT_APP_API_BASE
+    ? `${process.env.REACT_APP_API_BASE}/api/`
+    : 'http://localhost:4000/api/';
 
   const [resolvedUserId, setResolvedUserId] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -75,11 +77,11 @@ export function useUserProfile(paramUserId) {
 
         setLibrary(Array.isArray(data.items) ? data.items : []);
         setTotalPages(Math.max(1, Math.ceil((data.total || 0) / pageSize)));
-        
+
         const reading = (data.items || []).filter(i => i.status === 'reading').length;
         const completed = (data.items || []).filter(i => i.status === 'completed').length;
         setStats({ total: Number(data.total || 0), reading, completed });
-        
+
       } catch (err) {
         if (err.name === 'AbortError') return;
         setLibrary([]);

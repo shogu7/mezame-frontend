@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:4000/api/';
+const API_BASE = process.env.REACT_APP_API_BASE
+  ? `${process.env.REACT_APP_API_BASE}/api/`
+  : 'http://localhost:4000/api/';
 
 const formatStatus = (status) => {
   if (!status && status !== 0) return '';

@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 export function useProfileEdit(authUser) {
   const navigate = useNavigate();
-  const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:4000/api/';
+  const API_BASE = process.env.REACT_APP_API_BASE
+    ? `${process.env.REACT_APP_API_BASE}/api/`
+    : 'http://localhost:4000/api/';
 
   const [profile, setProfile] = useState({
     username: '',
@@ -11,14 +13,14 @@ export function useProfileEdit(authUser) {
     bio: '',
     pinnedManhwa: [],
   });
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [successOpen, setSuccessOpen] = useState(false);
 
   const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState(''); 
-  
+  const [avatarPreview, setAvatarPreview] = useState('');
+
   const [availableManhwa, setAvailableManhwa] = useState([]);
   const [loadingManhwa, setLoadingManhwa] = useState(false);
 
@@ -26,19 +28,19 @@ export function useProfileEdit(authUser) {
 
   useEffect(() => {
     if (authUser === undefined) {
-        return; 
+      return;
     }
 
     const token = getToken();
-    
-    if (!token) { 
-      setLoading(false); 
-      return; 
+
+    if (!token) {
+      setLoading(false);
+      return;
     }
-    
+
     const controller = new AbortController();
     const fetchProfile = async () => {
-      
+
       try {
         setError(null);
 
@@ -62,7 +64,7 @@ export function useProfileEdit(authUser) {
         setAvatarPreview(avatar);
       } catch (err) {
         if (err.name !== 'AbortError') {
-            setError(err.message || 'Failed to load profile');
+          setError(err.message || 'Failed to load profile');
         }
       } finally {
         setLoading(false);
@@ -75,7 +77,7 @@ export function useProfileEdit(authUser) {
 
   useEffect(() => {
     if (!authUser) return;
-    
+
     const controller = new AbortController();
 
     const fetchLibrary = async () => {
@@ -167,7 +169,7 @@ export function useProfileEdit(authUser) {
       if (!res.ok) {
         const text = await res.text();
         let msg = `Server error (${res.status})`;
-        try { msg = JSON.parse(text).error || msg; } catch(e){ }
+        try { msg = JSON.parse(text).error || msg; } catch (e) { }
         throw new Error(msg);
       }
 

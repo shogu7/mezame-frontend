@@ -20,7 +20,7 @@ export default function Login() {
   const { loginWithToken } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState(null);
@@ -31,25 +31,30 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
-    
+
+    const API_BASE = process.env.REACT_APP_API_BASE
+      ? `${process.env.REACT_APP_API_BASE}/api/`
+      : 'http://localhost:4000/api/';
+
     try {
-      const res = await axios.post('http://localhost:4000/api/auth/login', { identifier, password });
-      
+
+      const res = await axios.post(`${API_BASE}auth/login`, { identifier, password });
+
       console.log('✅ Login success, token:', res.data.token);
-      
+
       // Utiliser loginWithToken du contexte pour mettre à jour user
       loginWithToken(res.data.token);
-      
+
       setMessage({ type: 'success', text: `Connexion réussie !` });
-      
+
       // Rediriger vers la page d'origine ou vers home
       const from = location.state?.from || '/';
       console.log('🚀 Redirecting to:', from);
-      
+
       setTimeout(() => {
         navigate(from, { replace: true });
       }, 500);
-      
+
     } catch (err) {
       console.error('❌ Login error:', err);
       setMessage({ type: 'error', text: err.response?.data?.message || 'Erreur de connexion' });

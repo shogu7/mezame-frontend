@@ -22,17 +22,21 @@ export default function Register({ setUser }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const API_BASE = process.env.REACT_APP_API_BASE
+    ? `${process.env.REACT_APP_API_BASE}/api/`
+    : 'http://localhost:4000/api/';
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
     try {
-      const res = await axios.post('http://localhost:4000/api/auth/register', {
+      const res = await axios.post(`${API_BASE}auth/register`, {
         username, email, password
       });
       setMessage({ type: 'success', text: `Compte créé ! ID: ${res.data.user_id}` });
-      setUsername(''); 
-      setEmail(''); 
+      setUsername('');
+      setEmail('');
       setPassword('');
     } catch (err) {
       setMessage({ type: 'error', text: err.response?.data?.error || 'Erreur' });

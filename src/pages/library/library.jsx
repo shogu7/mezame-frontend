@@ -3,7 +3,10 @@ import { Container, Grid, CircularProgress, Box, Typography } from '@mui/materia
 import SearchToolbar from './components/SearchToolbar';
 import CardManhwa from './components/cardManhwa';
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:4000/api/';
+  const API_BASE = process.env.REACT_APP_API_BASE
+      ? `${process.env.REACT_APP_API_BASE}/api/`
+      : 'http://localhost:4000/api/';
+// console.log(API_BASE);
 
 export default function Library() {
     const [manhwas, setManhwas] = useState([]);
