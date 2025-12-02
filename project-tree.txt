@@ -1,0 +1,60 @@
+.
+./README.md
+./public
+./public/favicon.ico
+./public/index.html
+./public/logo512.png
+./public/manifest.json
+./public/robots.txt
+./public/logo192.png
+./.gitignore
+./package-lock.json
+./package.json
+./project-tree.txt
+./src
+./src/reportWebVitals.js
+./src/Router.jsx
+./src/features
+./src/features/auth
+./src/features/auth/components
+./src/features/admin
+./src/features/admin/styles
+./src/features/admin/components
+./src/features/user
+./src/features/user/components
+./src/features/manhwa
+./src/features/manhwa/components
+./src/index.js
+./src/index.css
+./src/shared
+./src/shared/utils
+./src/shared/styles
+./src/shared/styles/App.css
+./src/shared/styles/theme.js
+./src/shared/styles/pages
+./src/shared/components
+./src/shared/components/buttons
+./src/shared/components/layout
+./src/shared/components/effects
+./src/shared/api
+./src/shared/api/manhwaApi.js
+./src/App.test.js
+./src/App.jsx
+./src/setupTests.js
+./src/pages
+./src/pages/home
+./src/pages/home/HomePage.module.css
+./src/pages/home/HomePage.jsx
+./src/pages/auth
+./src/pages/auth/ConnectionPage.jsx
+./src/pages/admin
+./src/pages/admin/PanelAdminPage.jsx
+./src/logo.svg
+
+
+TODO: 
+    - Delete the seleciton animation in the navBar.
+    - Fix the backend: Create a new tables in manhwaUser for "date" and make it work with front (lastedManhwa).
+    - Add a new background that'll fit better and make the page live.
+    - User Page, with all information of the user
+    - translate all the text in english
