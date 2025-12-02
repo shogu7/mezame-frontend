@@ -7,16 +7,18 @@ import theme from './shared/styles/theme.js';
 import GooeyNav from './shared/components/layout/Header/gooeyNav.jsx';
 import Router from './router.jsx';
 import { AuthProvider, useAuth } from './shared/context/authContext.js';
+import LightRays from './shared/components/layout/Background/LightRays/LightRays.jsx'
 
 function AppContent() {
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const isNotHome = location.pathname !== '/'; // make the background for all page exclude home page
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
- // console.log('🔵 AppContent render - user:', user, 'loading:', loading);
+  // console.log('🔵 AppContent render - user:', user, 'loading:', loading);
 
   const showMessage = (msg) => {
     setSnackbarMessage(msg);
@@ -32,19 +34,19 @@ function AppContent() {
   const items = [
     { label: "Home", href: "/" },
     { label: "Library", href: "/library" },
-    { 
-      label: "Collection", 
+    {
+      label: "Collection",
       href: username ? `/collection/${username}` : "/collection",
-      requiresAuth: true 
+      requiresAuth: true
     },
-    { 
-      label: "Profile", 
+    {
+      label: "Profile",
       href: username ? `/profile/${username}` : "/profile",
-      requiresAuth: true 
+      requiresAuth: true
     },
     ...(user?.is_admin === 1 ? [{ label: "Admin Panel", href: "/admin", requiresAuth: true }] : []),
-    { 
-      label: user ? "Déconnexion" : "Connexion", 
+    {
+      label: user ? "Déconnexion" : "Connexion",
       href: user ? "/logout" : "/login",
       isAuthToggle: true
     },
@@ -54,7 +56,7 @@ function AppContent() {
 
   const handleNavItemClick = (href) => {
     // console.log('Click:', href, 'user:', user?.username);
-    
+
     if (!href) return;
 
     const hrefNorm = String(href).toLowerCase();
@@ -79,14 +81,14 @@ function AppContent() {
 
   useEffect(() => {
     if (user || loading) return;
-    
+
     const currentPath = location.pathname.toLowerCase();
-    const isProtectedPath = 
-      currentPath.startsWith('/profile') || 
+    const isProtectedPath =
+      currentPath.startsWith('/profile') ||
       currentPath.startsWith('/collection');
-    
+
     if (isProtectedPath && currentPath !== '/login') {
-     // console.log('Guard: Redirection vers login');
+      // console.log('Guard: Redirection vers login');
       showMessage("Vous devez être connecté pour accéder à cette page");
       navigate("/login", { state: { from: location.pathname }, replace: true });
     }
@@ -100,9 +102,31 @@ function AppContent() {
   return (
     <>
       <CssBaseline />
+      {isNotHome && (
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="#00ffff"
+          raysSpeed={1.5}
+          lightSpread={0.8}
+          rayLength={1.2}
+          followMouse={true}
+          mouseInfluence={0.1}
+          noiseAmount={0.1}
+          distortion={0.05}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: -1,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <GooeyNav 
-          items={items} 
+        <GooeyNav
+          items={items}
           onItemClick={handleNavItemClick}
           key={user?.username || 'guest'}
         />
