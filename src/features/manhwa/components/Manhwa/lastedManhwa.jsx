@@ -39,6 +39,7 @@ export default function LatestManhwaList({
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
         const json = await res.json();
+        console.log('Fetched manhwa:', json);
         let itemsToSet = [];
 
         if (Array.isArray(json)) {
