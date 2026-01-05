@@ -6,9 +6,34 @@ import {
   Button,
   IconButton,
 } from '@mui/material';
-import { Share, Star, BookmarkAdd, Edit } from '@mui/icons-material';
+import { Share, Star, BookmarkAdd, Edit, Delete } from '@mui/icons-material';
 
-export default function ManhwaInfo({ manhwa, genres, rating, isInLibrary, onOpenDialog, onShare }) {
+export default function ManhwaInfo({
+  manhwa,
+  genres,
+  rating,
+  isInLibrary,
+  onOpenDialog,
+  onShare,
+  saveToLibrary,
+  saving,
+  showMessage
+}) {
+
+  const handleRemoveFromLibrary = async () => {
+    if (!manhwa) return;
+    try {
+      await saveToLibrary({
+        manhwa_id: manhwa.manhwa_id,
+        status: 'neutral',
+        current_chapter: 0,
+        rating: null
+      });
+    } catch (err) {
+      showMessage?.('Failed to remove from library', 'error');
+    }
+  };
+
   return (
     <div>
       <Typography variant="h2" component="h1" sx={{ fontSize: { xs: '1.75rem', md: '2.5rem' }, fontWeight: 600, color: 'text.primary', mb: 2, letterSpacing: '-0.2px' }}>
@@ -39,7 +64,23 @@ export default function ManhwaInfo({ manhwa, genres, rating, isInLibrary, onOpen
           {isInLibrary ? 'Edit' : 'Add to Library'}
         </Button>
 
-        <IconButton onClick={onShare} sx={{ border: '1px solid rgba(255,255,255,0.06)', color: 'text.secondary', '&:hover': { bgcolor: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.12)' } }} aria-label="Share">
+        {isInLibrary && (
+          <Button
+            variant="outlined"
+            startIcon={<Delete />}
+            onClick={handleRemoveFromLibrary}
+            disabled={saving}
+            sx={{ borderColor: 'rgba(255,255,255,0.06)', color: 'text.secondary', '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' } }}
+          >
+            Retirer du profil
+          </Button>
+        )}
+
+        <IconButton
+          onClick={onShare}
+          sx={{ border: '1px solid rgba(255,255,255,0.06)', color: 'text.secondary', '&:hover': { bgcolor: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.12)' } }}
+          aria-label="Share"
+        >
           <Share />
         </IconButton>
       </Stack>

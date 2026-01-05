@@ -177,6 +177,9 @@ export default function ManhwaPage() {
               isInLibrary={isInLibrary}
               onOpenDialog={handleOpenDialog}
               onShare={handleShare}
+              saveToLibrary={saveToLibrary}
+              saving={saving}
+              showMessage={showMessage}
             />
 
             <ManhwaStat
