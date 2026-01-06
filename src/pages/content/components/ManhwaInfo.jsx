@@ -17,23 +17,9 @@ export default function ManhwaInfo({
   onShare,
   saveToLibrary,
   saving,
-  showMessage
+  showMessage,
+  onRemoveFromLibrary,
 }) {
-
-  const handleRemoveFromLibrary = async () => {
-    if (!manhwa) return;
-    try {
-      await saveToLibrary({
-        manhwa_id: manhwa.manhwa_id,
-        status: 'neutral',
-        current_chapter: 0,
-        rating: null
-      });
-    } catch (err) {
-      showMessage?.('Failed to remove from library', 'error');
-    }
-  };
-
   return (
     <div>
       <Typography variant="h2" component="h1" sx={{ fontSize: { xs: '1.75rem', md: '2.5rem' }, fontWeight: 600, color: 'text.primary', mb: 2, letterSpacing: '-0.2px' }}>
@@ -54,6 +40,7 @@ export default function ManhwaInfo({
       </Stack>
 
       <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+        {/* Bouton add / edit */}
         <Button
           variant="contained"
           startIcon={isInLibrary ? <Edit /> : <BookmarkAdd />}
@@ -64,15 +51,16 @@ export default function ManhwaInfo({
           {isInLibrary ? 'Edit' : 'Add to Library'}
         </Button>
 
-        {isInLibrary && (
+        {/* BOUTON DELETE — use prop onRemoveFromLibrary from ManhwaPage */}
+        {isInLibrary && onRemoveFromLibrary && (
           <Button
             variant="outlined"
             startIcon={<Delete />}
-            onClick={handleRemoveFromLibrary}
+            onClick={onRemoveFromLibrary}
             disabled={saving}
             sx={{ borderColor: 'rgba(255,255,255,0.06)', color: 'text.secondary', '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' } }}
           >
-            Retirer du profil
+            Remove from the profil
           </Button>
         )}
 

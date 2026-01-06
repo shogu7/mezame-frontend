@@ -15,7 +15,7 @@ import ManhwaInfo from './components/ManhwaInfo';
 import ManhwaStat from './components/ManhwaStats';
 import LibraryDialog from './components/LibraryDialog';
 import LibrarySnackbar from './components/LibrarySnackbar';
-import BackButton from '../../shared/components/buttons/BackButton'
+import BackButton from '../../shared/components/buttons/BackButton';
 
 import useSnackbar from './hooks/useSnackbar';
 import useLibraryStatus from './hooks/useLibraryStatus';
@@ -53,7 +53,9 @@ export default function ManhwaPage() {
 
     (async () => {
       try {
-        const res = await fetch(`${API_BASE}manhwa/${id}`);
+        const res = await fetch(`${API_BASE}manhwa/${id}`, {
+          credentials: 'include',
+        });
         if (!res.ok) {
           const text = await res.text();
           throw new Error(`API error ${res.status}: ${text}`);
@@ -104,6 +106,38 @@ export default function ManhwaPage() {
         title: manhwa.title,
         url: window.location.href,
       });
+    }
+  };
+
+  // Suppression de la collection — envoie DELETE avec auth
+  const handleRemoveFromLibrary = async () => {
+    if (!manhwa) return;
+    if (!window.confirm(`Voulez-vous vraiment retirer "${manhwa.title}" de votre collection ?`)) return;
+
+    try {
+      const res = await fetch(`${API_BASE}user/library/${manhwa.manhwa_id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        credentials: 'include',
+      });
+
+      const data = await res.json();
+      if (data.ok) {
+        showMessage(`"${manhwa.title}" a été retiré de votre collection.`);
+        setManhwa(prev => (prev ? { ...prev, inLibrary: false } : prev));
+        setReadingStatus('plan_to_read');
+        setCurrentChapter(0);
+        setUserRating(null);
+        await checkLibraryStatus(manhwa.manhwa_id);
+      } else {
+        showMessage(`Erreur: ${data.error}`, 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showMessage(`Erreur serveur: ${err.message}`, 'error');
     }
   };
 
@@ -180,6 +214,7 @@ export default function ManhwaPage() {
               saveToLibrary={saveToLibrary}
               saving={saving}
               showMessage={showMessage}
+              onRemoveFromLibrary={handleRemoveFromLibrary} // <-- passthrough
             />
 
             <ManhwaStat
@@ -189,6 +224,8 @@ export default function ManhwaPage() {
               userRating={userRating}
               manhwa={manhwa}
             />
+
+            {/* Le bouton "Retirer du profil" est maintenant géré dans ManhwaInfo */}
           </Grid>
         </Grid>
 
